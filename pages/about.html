@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Learners FC</title>
+<meta name="description" content="Why Learners FC exists, what the name means, and how the club builds players — on the pitch and in life.">
+
+<style>
+  /* ============================================
+     0. DESIGN TOKENS — kept identical to index.html
+     Change here to re-brand the whole site.
+  ============================================ */
+  :root{
+    --color-primary:       #0E2A1F;
+    --color-primary-light: #1D4834;
+    --color-primary-dark:  #081C14;
+    --color-bg:            #FFFFFF;
+    --color-bg-alt:        #F4F5F1;
+    --color-accent:        #E3A130;
+    --color-text:          #12201A;
+    --color-text-muted:    #5C6A62;
+    --color-line:          #E1E4DD;
+    --color-white:         #FFFFFF;
+
+    --font-display: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --container: 1180px;
+    --radius: 6px;
+    --transition: 220ms ease;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    color:var(--color-text);
+    background:var(--color-bg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  ul{ list-style:none; margin:0; padding:0; }
+  h1,h2,h3,h4{ margin:0; font-family:var(--font-display); letter-spacing:0.01em; }
+  p{ margin:0; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  .container{ max-width:var(--container); margin:0 auto; padding:0 24px; }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:0.78rem; font-weight:700; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--color-accent);
+  }
+  .eyebrow::before{ content:""; width:28px; height:2px; background:var(--color-accent); display:inline-block; }
+
+  .section{ padding:96px 0; }
+  .section-alt{ background:var(--color-bg-alt); }
+  .section-dark{ background:var(--color-primary); color:var(--color-white); }
+  .section-head{ max-width:680px; margin-bottom:56px; }
+  .section-head.center{ margin-left:auto; margin-right:auto; text-align:center; }
+  .section-title{
+    font-size:clamp(1.9rem, 3.4vw, 2.7rem);
+    line-height:1.08; margin-top:12px; text-transform:uppercase;
+  }
+  .section-sub{ margin-top:16px; color:var(--color-text-muted); font-size:1.02rem; max-width:56ch; }
+  .section-head.center .section-sub{ margin-left:auto; margin-right:auto; }
+  .section-dark .section-sub{ color:#C7D3CC; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    padding:15px 30px; border-radius:var(--radius); font-weight:700;
+    font-size:0.82rem; letter-spacing:0.09em; text-transform:uppercase;
+    border:2px solid transparent;
+    transition:transform var(--transition), background var(--transition), color var(--transition), border-color var(--transition);
+    white-space:nowrap;
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn-primary{ background:var(--color-accent); color:var(--color-primary-dark); }
+  .btn-primary:hover{ background:#f0b04f; }
+  .btn-outline{ background:transparent; border-color:currentColor; color:inherit; }
+  .btn-outline:hover{ background:rgba(255,255,255,0.12); }
+  .btn-outline-dark{ background:transparent; border-color:var(--color-primary); color:var(--color-primary); }
+  .btn-outline-dark:hover{ background:var(--color-primary); color:var(--color-white); }
+
+  .reveal{ opacity:0; transform:translateY(26px); transition:opacity 700ms ease, transform 700ms ease; }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+
+  /* ============================================
+     HEADER / NAV — identical system to index.html
+  ============================================ */
+  .site-header{
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    background:rgba(14,42,31,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    transition:background var(--transition);
+  }
+  .nav{ display:flex; align-items:center; justify-content:space-between; height:76px; }
+  .brand{ display:flex; align-items:center; gap:12px; color:var(--color-white); }
+  .brand-mark{
+    width:42px; height:42px; border-radius:50%;
+    border:2px solid var(--color-accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:0.95rem; color:var(--color-accent);
+    flex-shrink:0;
+  }
+  .brand-name{
+    font-family:var(--font-display); font-size:1.05rem;
+    letter-spacing:0.06em; text-transform:uppercase; line-height:1.1;
+  }
+  .brand-name span{
+    display:block; font-family:var(--font-body); font-weight:400;
+    font-size:0.62rem; letter-spacing:0.22em; color:var(--color-accent); margin-top:2px;
+  }
+
+  .nav-links{ display:flex; align-items:center; gap:2px; }
+  .nav-links a{
+    color:#D8DED9; font-size:0.82rem; font-weight:600; letter-spacing:0.05em;
+    text-transform:uppercase; padding:10px 16px; border-radius:var(--radius);
+    transition:color var(--transition), background var(--transition);
+  }
+  .nav-links a:hover{ color:var(--color-white); background:rgba(255,255,255,0.06); }
+  .nav-links a.active{ color:var(--color-accent); }
+
+  .nav-toggle{
+    display:none; flex-direction:column; justify-content:center; gap:5px;
+    width:40px; height:40px; background:transparent; border:none; padding:0;
+  }
+  .nav-toggle span{ width:100%; height:2px; background:var(--color-white); transition:transform var(--transition), opacity var(--transition); }
+  .nav-toggle.is-open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2){ opacity:0; }
+  .nav-toggle.is-open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  /* ============================================
+     INNER-PAGE HERO
+  ============================================ */
+  .page-hero{
+    position:relative;
+    min-height:56vh;
+    display:flex; align-items:flex-end;
+    color:var(--color-white);
+    overflow:hidden;
+    background-color:var(--color-primary-dark);
+    padding-top:76px;
+  }
+  .page-hero-media{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(180deg, rgba(8,28,20,0.55) 0%, rgba(8,28,20,0.82) 60%, rgba(8,28,20,0.97) 100%),
+      url('../images/club/about-hero.jpg');
+    background-size:cover;
+    background-position:center;
+  }
+  .page-hero-media::after{
+    content:"";
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 90px);
+    pointer-events:none;
+  }
+  .page-hero-content{ position:relative; z-index:2; padding:64px 0 56px; max-width:760px; }
+  .page-hero-eyebrow{
+    display:inline-block; font-size:0.8rem; font-weight:700; letter-spacing:0.24em;
+    text-transform:uppercase; color:var(--color-accent); margin-bottom:18px;
+  }
+  .page-hero-title{ font-size:clamp(2.2rem, 6vw, 4rem); line-height:1.02; text-transform:uppercase; }
+  .page-hero-lead{ margin-top:20px; font-size:clamp(1rem, 1.5vw, 1.2rem); max-width:52ch; color:#E4E9E4; }
+
+  /* ============================================
+     OUR STORY
+  ============================================ */
+  .story-layout{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:start; }
+  .story-text p{ color:var(--color-text-muted); font-size:1.02rem; margin-bottom:18px; }
+  .story-quote{
+    background:var(--color-primary);
+    color:var(--color-white);
+    border-radius:var(--radius);
+    padding:44px 36px;
+    position:relative;
+    overflow:hidden;
+  }
+  .story-quote::before{
+    content:"";
+    position:absolute; right:-30px; top:-30px;
+    width:150px; height:150px;
+    border:2px dashed rgba(227,161,48,0.25);
+    border-radius:50%;
+  }
+  .story-quote-mark{
+    font-family:var(--font-display);
+    font-size:3rem;
+    color:var(--color-accent);
+    line-height:1;
+    position:relative; z-index:1;
+  }
+  .story-quote-text{
+    margin-top:10px;
+    font-family:var(--font-display);
+    font-size:1.5rem;
+    text-transform:uppercase;
+    line-height:1.2;
+    position:relative; z-index:1;
+  }
+  .story-quote-note{
+    margin-top:18px;
+    font-size:0.85rem;
+    color:#B9C4BC;
+    position:relative; z-index:1;
+  }
+
+  /* ============================================
+     OUR NAME IS OUR MISSION — large cards
+  ============================================ */
+  .mission-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  .mission-card{
+    position:relative;
+    background:var(--color-white);
+    border:1px solid var(--color-line);
+    border-radius:var(--radius);
+    padding:38px 32px 34px;
+    transition:transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    overflow:hidden;
+  }
+  .mission-card::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:var(--color-accent); transform:scaleY(0); transform-origin:bottom;
+    transition:transform 320ms ease;
+  }
+  .mission-card:hover{ transform:translateY(-6px); box-shadow:0 18px 34px rgba(14,42,31,0.12); border-color:transparent; }
+  .mission-card:hover::before{ transform:scaleY(1); }
+  .mission-index{ font-family:var(--font-display); font-size:2.4rem; color:var(--color-line); line-height:1; }
+  .mission-title{ margin-top:16px; font-size:1.3rem; text-transform:uppercase; letter-spacing:0.03em; }
+  .mission-statement{ margin-top:10px; color:var(--color-accent); font-weight:700; font-size:0.9rem; }
+  .mission-focus{ margin-top:18px; padding-top:18px; border-top:1px solid var(--color-line); }
+  .mission-focus-label{ font-size:0.72rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-text-muted); margin-bottom:10px; }
+  .mission-focus-list li{
+    font-size:0.9rem; color:var(--color-text-muted);
+    padding-left:16px; position:relative; margin-bottom:8px;
+  }
+  .mission-focus-list li::before{
+    content:""; position:absolute; left:0; top:9px;
+    width:6px; height:6px; border-radius:50%; background:var(--color-accent);
+  }
+
+  /* ============================================
+     OUR VISION
+  ============================================ */
+  .vision-layout{
+    display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; align-items:center;
+  }
+  .vision-statement{
+    font-family:var(--font-display);
+    font-size:clamp(1.6rem, 3vw, 2.3rem);
+    text-transform:uppercase;
+    line-height:1.15;
+    color:var(--color-white);
+  }
+  .vision-statement em{ font-style:normal; color:var(--color-accent); }
+  .vision-points{ display:grid; gap:20px; }
+  .vision-point{
+    display:flex; gap:16px; align-items:flex-start;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:var(--radius);
+    padding:20px 22px;
+  }
+  .vision-point-num{
+    font-family:var(--font-display); color:var(--color-accent);
+    font-size:1rem; flex-shrink:0;
+  }
+  .vision-point-text{ color:#D8DED9; font-size:0.95rem; }
+
+  /* ============================================
+     VALUES
+  ============================================ */
+  .values-grid{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:20px;
+  }
+  .value-card{
+    background:var(--color-white);
+    border:1px solid var(--color-line);
+    border-radius:var(--radius);
+    padding:28px 24px;
+    transition:transform var(--transition), box-shadow var(--transition);
+  }
+  .value-card:hover{ transform:translateY(-5px); box-shadow:0 14px 26px rgba(14,42,31,0.1); }
+  .value-title{ font-size:1.05rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--color-primary); }
+  .value-text{ margin-top:10px; font-size:0.88rem; color:var(--color-text-muted); }
+
+  /* ============================================
+     FOOTBALL + LIFE
+  ============================================ */
+  .teaches-layout{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+  .teaches-list{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .teaches-item{
+    display:flex; align-items:center; gap:12px;
+    padding:14px 16px;
+    background:var(--color-bg-alt);
+    border-radius:var(--radius);
+    font-size:0.92rem;
+    font-weight:600;
+  }
+  .teaches-item .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--color-accent); flex-shrink:0;
+  }
+  .teaches-text p{ color:var(--color-text-muted); font-size:1.02rem; margin-bottom:16px; }
+
+  /* ============================================
+     APPROACH JOURNEY (6 steps)
+  ============================================ */
+  .approach-journey{
+    display:grid; grid-template-columns:repeat(6, 1fr);
+    gap:0; margin-top:64px; position:relative;
+  }
+  .approach-journey::before{
+    content:""; position:absolute; top:19px; left:0; right:0; height:2px;
+    background:rgba(255,255,255,0.16);
+  }
+  .approach-step{ position:relative; padding:0 12px; text-align:left; }
+  .approach-num{
+    width:40px; height:40px; border-radius:50%;
+    background:var(--color-primary); border:2px solid var(--color-accent); color:var(--color-accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:0.85rem;
+    margin-bottom:20px; position:relative; z-index:1;
+  }
+  .approach-title{ font-size:0.92rem; letter-spacing:0.03em; text-transform:uppercase; color:var(--color-white); }
+  .approach-text{ margin-top:8px; font-size:0.82rem; color:#B9C4BC; }
+
+  /* ============================================
+     COACH'S MESSAGE
+  ============================================ */
+  .coach-card{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:44px;
+    background:var(--color-bg-alt);
+    border:1px solid var(--color-line);
+    border-radius:var(--radius);
+    padding:44px;
+    align-items:center;
+  }
+  .coach-photo{
+    aspect-ratio:1/1;
+    border-radius:50%;
+    background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary));
+    display:flex; align-items:center; justify-content:center;
+    color:rgba(255,255,255,0.55);
+    font-family:var(--font-display);
+    font-size:2.2rem;
+    overflow:hidden;
+  }
+  .coach-photo img{ width:100%; height:100%; object-fit:cover; }
+  .coach-name{ font-size:1.2rem; text-transform:uppercase; letter-spacing:0.02em; color:var(--color-primary); }
+  .coach-role{ margin-top:4px; font-size:0.85rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--color-accent); }
+  .coach-message{ margin-top:18px; font-size:0.98rem; color:var(--color-text-muted); font-style:italic; }
+
+  /* ============================================
+     CLOSING STATEMENT
+  ============================================ */
+  .closing{
+    background:var(--color-primary);
+    color:var(--color-white);
+    border-radius:var(--radius);
+    padding:76px 56px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .closing::before{
+    content:"";
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(227,161,48,0.05) 0 2px, transparent 2px 60px);
+  }
+  .closing-inner{ position:relative; z-index:1; max-width:640px; margin:0 auto; }
+  .closing-title{ font-size:clamp(2rem, 4vw, 3rem); text-transform:uppercase; }
+  .closing-lines{ margin-top:22px; font-size:1.1rem; color:#E4E9E4; line-height:1.8; }
+  .closing-actions{ margin-top:36px; display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
+
+  /* ============================================
+     FOOTER — identical to index.html
+  ============================================ */
+  .site-footer{ background:var(--color-primary-dark); color:#B9C4BC; padding:64px 0 28px; }
+  .footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr; gap:40px; }
+  .footer-brand .brand{ color:var(--color-white); margin-bottom:16px; }
+  .footer-statement{ font-size:0.92rem; max-width:34ch; color:#9AA79F; }
+  .footer-philosophy{
+    margin-top:18px; font-family:var(--font-display); font-size:0.85rem;
+    letter-spacing:0.1em; color:var(--color-accent); text-transform:uppercase;
+  }
+  .footer-heading{
+    font-size:0.78rem; font-weight:700; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--color-white); margin-bottom:18px;
+  }
+  .footer-links li{ margin-bottom:11px; }
+  .footer-links a{ font-size:0.9rem; color:#B9C4BC; transition:color var(--transition); }
+  .footer-links a:hover{ color:var(--color-accent); }
+  .footer-contact li{ margin-bottom:11px; font-size:0.9rem; }
+  .social-row{ display:flex; gap:10px; margin-top:18px; }
+  .social-icon{
+    width:36px; height:36px; border-radius:50%;
+    border:1px solid rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.78rem;
+    transition:border-color var(--transition), color var(--transition);
+  }
+  .social-icon:hover{ border-color:var(--color-accent); color:var(--color-accent); }
+  .footer-bottom{
+    margin-top:56px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    font-size:0.82rem; color:#7E8B83;
+  }
+
+  /* ============================================
+     RESPONSIVE
+  ============================================ */
+  @media (max-width:1024px){
+    .story-layout{ grid-template-columns:1fr; }
+    .mission-grid{ grid-template-columns:1fr; }
+    .vision-layout{ grid-template-columns:1fr; }
+    .values-grid{ grid-template-columns:repeat(2, 1fr); }
+    .teaches-layout{ grid-template-columns:1fr; }
+    .approach-journey{ grid-template-columns:repeat(3,1fr); row-gap:36px; }
+    .approach-journey::before{ display:none; }
+    .coach-card{ grid-template-columns:180px 1fr; padding:32px; gap:30px; }
+    .footer-grid{ grid-template-columns:1fr 1fr; row-gap:36px; }
+  }
+
+  @media (max-width:760px){
+    .section{ padding:68px 0; }
+    .nav-links{
+      position:fixed; top:76px; left:0; right:0;
+      flex-direction:column; align-items:stretch;
+      background:var(--color-primary-dark);
+      padding:10px 24px 26px; gap:0;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      transform:translateY(-8px); opacity:0; pointer-events:none;
+      transition:opacity var(--transition), transform var(--transition);
+    }
+    .nav-links.is-open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+    .nav-links a{ padding:14px 4px; border-bottom:1px solid rgba(255,255,255,0.06); border-radius:0; }
+    .nav-toggle{ display:flex; }
+    .values-grid{ grid-template-columns:1fr 1fr; }
+    .teaches-list{ grid-template-columns:1fr; }
+    .approach-journey{ grid-template-columns:1fr 1fr; }
+    .coach-card{ grid-template-columns:1fr; text-align:center; padding:32px 26px; }
+    .coach-photo{ width:140px; margin:0 auto; }
+    .footer-grid{ grid-template-columns:1fr; }
+    .closing{ padding:52px 26px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HEADER / NAVIGATION
+============================================ -->
+<header class="site-header">
+  <div class="container nav">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark">LFC</span>
+      <span class="brand-name">Learners FC<span>Learn · Relearn · Unlearn</span></span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="about.html" class="active" aria-current="page">About</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="fixtures.html">Fixtures</a></li>
+        <li><a href="news.html">News</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="development.html">Development</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============================================
+     PAGE HERO
+============================================ -->
+<section class="page-hero">
+  <div class="page-hero-media" role="img" aria-label="Learners FC players together"></div>
+  <div class="container page-hero-content">
+    <span class="page-hero-eyebrow">About Learners FC</span>
+    <h1 class="page-hero-title">More Than Football.</h1>
+    <p class="page-hero-lead">Building players. Building character. Preparing the next generation.</p>
+  </div>
+</section>
+
+<!-- ============================================
+     OUR STORY
+============================================ -->
+<section class="section" id="story">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Where We Begin</span>
+      <h2 class="section-title">Our Story</h2>
+    </div>
+
+    <div class="story-layout">
+      <div class="story-text reveal">
+        <p>Learners FC is being built from the ground up — not around a trophy cabinet or a history to protect, but around a mindset to grow. We are at the very beginning of our journey, and that is exactly where we want to start: with the fundamentals, with humility, and with a long-term view of what player development should look like.</p>
+        <p>Rather than chasing shortcuts, Learners FC is committed to doing things the right way from day one — learning constantly, relearning what needs strengthening, and unlearning the habits that hold young players back. Every part of the club, from training to conduct, is being shaped around this same idea.</p>
+        <p>This is not a finished club. It is a club in progress — and that progress is the point.</p>
+      </div>
+
+      <div class="story-quote reveal">
+        <span class="story-quote-mark">"</span>
+        <p class="story-quote-text">This is how we build players.</p>
+        <p class="story-quote-note">— The Learners FC philosophy</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     OUR NAME IS OUR MISSION
+============================================ -->
+<section class="section section-alt" id="mission">
+  <div class="container">
+    <div class="section-head center reveal" style="margin-left:auto;margin-right:auto;">
+      <span class="eyebrow" style="justify-content:center;">Our Foundation</span>
+      <h2 class="section-title">Our Name Is Our Mission</h2>
+      <p class="section-sub">At Learners FC, our name is our mission. Each word describes a stage of growth every player — and every person — moves through.</p>
+    </div>
+
+    <div class="mission-grid">
+      <article class="mission-card reveal">
+        <span class="mission-index">01</span>
+        <h3 class="mission-title">Learn</h3>
+        <p class="mission-statement">We learn the fundamentals of football and life.</p>
+        <div class="mission-focus">
+          <p class="mission-focus-label">Focus Areas</p>
+          <ul class="mission-focus-list">
+            <li>Football fundamentals</li>
+            <li>Understanding the game</li>
+            <li>Teamwork</li>
+            <li>Discipline</li>
+            <li>Learning through experience</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="mission-card reveal">
+        <span class="mission-index">02</span>
+        <h3 class="mission-title">Relearn</h3>
+        <p class="mission-statement">We relearn consistency, humility, and hard work.</p>
+        <div class="mission-focus">
+          <p class="mission-focus-label">Focus Areas</p>
+          <ul class="mission-focus-list">
+            <li>Consistency</li>
+            <li>Humility</li>
+            <li>Commitment</li>
+            <li>Hard work</li>
+            <li>Continuous improvement</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="mission-card reveal">
+        <span class="mission-index">03</span>
+        <h3 class="mission-title">Unlearn</h3>
+        <p class="mission-statement">We unlearn fear, excuses, and complacency.</p>
+        <div class="mission-focus">
+          <p class="mission-focus-label">Focus Areas</p>
+          <ul class="mission-focus-list">
+            <li>Confidence</li>
+            <li>Accountability</li>
+            <li>Courage</li>
+            <li>Resilience</li>
+            <li>Rejecting complacency</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     OUR VISION
+============================================ -->
+<section class="section section-dark" id="vision">
+  <div class="container">
+    <div class="vision-layout">
+      <div class="reveal">
+        <span class="eyebrow" style="color:var(--color-accent)">Looking Ahead</span>
+        <h2 class="section-title" style="margin-top:12px;">Our Vision</h2>
+        <p class="vision-statement" style="margin-top:24px;">Preparing the next generation to be <em>ready for anything.</em></p>
+      </div>
+
+      <div class="vision-points reveal">
+        <div class="vision-point">
+          <span class="vision-point-num">01</span>
+          <p class="vision-point-text">We want every player who joins Learners FC to leave with football ability that has genuinely grown — built on fundamentals, not shortcuts.</p>
+        </div>
+        <div class="vision-point">
+          <span class="vision-point-num">02</span>
+          <p class="vision-point-text">Alongside football, we want players to develop qualities — discipline, humility, resilience — that serve them well beyond the pitch.</p>
+        </div>
+        <div class="vision-point">
+          <span class="vision-point-num">03</span>
+          <p class="vision-point-text">We measure progress not only in results, but in how our players carry themselves — in training, in matches, and in life.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     OUR VALUES
+============================================ -->
+<section class="section" id="values">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">What Guides Us</span>
+      <h2 class="section-title">What We Stand For</h2>
+      <p class="section-sub">Eight values that shape how Learners FC trains, plays and behaves — on and off the pitch.</p>
+    </div>
+
+    <div class="values-grid">
+      <div class="value-card reveal">
+        <h3 class="value-title">Discipline</h3>
+        <p class="value-text">Showing up, doing the work, and holding the standard even when no one is watching.</p>
+      </div>
+      <div class="value-card reveal">
+        <h3 class="value-title">Humility</h3>
+        <p class="value-text">Staying coachable, no matter how much progress has already been made.</p>
+      </div>
+      <div class="value-card reveal">
+        <h3 class="value-title">Hard Work</h3>
+        <p class="value-text">Putting in effort that matches ambition, every single session.</p>
+      </div>
+      <div class="value-card reveal">
+        <h3 class="value-title">Consistency</h3>
+        <p class="value-text">Repeating the right habits until they become second nature.</p>
+      </div>
+      <div class="value-card reveal">
+        <h3 class="value-title">Courage</h3>
+        <p class="value-text">Trying, failing, and trying again without fear holding you back.</p>
+      </div>
+      <div class="value-card reveal">
+        <h3 class="value-title">Growth</h3>
+        <p class="value-text">Treating every setback and success as a chance to improve.</p>
+      </div>
+      <div class="value-card reveal">
+        <h3 class="value-title">Teamwork</h3>
+        <p class="value-text">Putting the team's success ahead of individual recognition.</p>
+      </div>
+      <div class="value-card reveal">
+        <h3 class="value-title">Accountability</h3>
+        <p class="value-text">Owning mistakes and taking responsibility for the next step.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTBALL + LIFE
+============================================ -->
+<section class="section section-alt" id="teaches">
+  <div class="container">
+    <div class="teaches-layout">
+      <div class="reveal">
+        <span class="eyebrow">Beyond The Pitch</span>
+        <h2 class="section-title" style="margin-top:12px;">The Game Teaches More Than The Game</h2>
+        <div class="teaches-text" style="margin-top:22px;">
+          <p>Football has always been more than a sport. It is a daily lesson in discipline, communication and responsibility — often taught faster and more honestly than a classroom ever could.</p>
+          <p>At Learners FC, we see every training session and every match as an opportunity to develop the person as much as the player. The habits built here are the habits that follow our players everywhere else.</p>
+        </div>
+      </div>
+
+      <div class="teaches-list reveal">
+        <div class="teaches-item"><span class="dot"></span>Discipline</div>
+        <div class="teaches-item"><span class="dot"></span>Communication</div>
+        <div class="teaches-item"><span class="dot"></span>Teamwork</div>
+        <div class="teaches-item"><span class="dot"></span>Responsibility</div>
+        <div class="teaches-item"><span class="dot"></span>Resilience</div>
+        <div class="teaches-item"><span class="dot"></span>Leadership</div>
+        <div class="teaches-item"><span class="dot"></span>Handling Failure</div>
+        <div class="teaches-item"><span class="dot"></span>Respect</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     OUR APPROACH TO BUILDING PLAYERS
+============================================ -->
+<section class="section section-dark" id="approach">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="color:var(--color-accent)">Continuous Growth</span>
+      <h2 class="section-title">Our Approach To Building Players</h2>
+      <p class="section-sub">Development at Learners FC is not a straight line. It's a cycle that repeats, deepens and compounds over time.</p>
+    </div>
+
+    <div class="approach-journey">
+      <div class="approach-step reveal">
+        <div class="approach-num">1</div>
+        <h3 class="approach-title">Learn</h3>
+        <p class="approach-text">Take in something new — a skill, a habit, a lesson.</p>
+      </div>
+      <div class="approach-step reveal">
+        <div class="approach-num">2</div>
+        <h3 class="approach-title">Practice</h3>
+        <p class="approach-text">Repeat it until it starts to feel natural.</p>
+      </div>
+      <div class="approach-step reveal">
+        <div class="approach-num">3</div>
+        <h3 class="approach-title">Relearn</h3>
+        <p class="approach-text">Revisit and strengthen what still needs work.</p>
+      </div>
+      <div class="approach-step reveal">
+        <div class="approach-num">4</div>
+        <h3 class="approach-title">Adapt</h3>
+        <p class="approach-text">Apply it under new pressure, in new situations.</p>
+      </div>
+      <div class="approach-step reveal">
+        <div class="approach-num">5</div>
+        <h3 class="approach-title">Unlearn</h3>
+        <p class="approach-text">Let go of habits that no longer serve growth.</p>
+      </div>
+      <div class="approach-step reveal">
+        <div class="approach-num">6</div>
+        <h3 class="approach-title">Grow</h3>
+        <p class="approach-text">Carry it forward, and begin the cycle again.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     COACH'S MESSAGE
+============================================ -->
+<section class="section" id="coach">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">In Their Words</span>
+      <h2 class="section-title">A Message From The Coach</h2>
+    </div>
+
+    <div class="coach-card reveal">
+      <div class="coach-photo">
+        <img src="../images/club/coach.jpg" alt="Learners FC coach" loading="lazy"
+             onerror="this.style.display='none'; this.parentElement.textContent='Coach Photo';">
+      </div>
+      <div>
+        <h3 class="coach-name">Coach Name — Placeholder</h3>
+        <p class="coach-role">Head Coach — Role Placeholder</p>
+        <p class="coach-message">"The official message from the coach will be added here soon. This space is reserved to introduce the person leading Learners FC and share their view on how the club builds players."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     CLOSING STATEMENT
+============================================ -->
+<section class="section section-alt" id="closing">
+  <div class="container">
+    <div class="closing reveal">
+      <div class="closing-inner">
+        <h2 class="closing-title">This Is How We Build Players.</h2>
+        <p class="closing-lines">We learn.<br>We relearn.<br>We unlearn.<br>We grow together.</p>
+        <div class="closing-actions">
+          <a href="team.html" class="btn btn-primary">Meet The Team</a>
+          <a href="development.html" class="btn btn-outline">Our Development</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTER
+============================================ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="brand">
+          <span class="brand-mark">LFC</span>
+          <span class="brand-name">Learners FC</span>
+        </a>
+        <p class="footer-statement">Preparing the next generation to be ready for anything — on the pitch and in life.</p>
+        <p class="footer-philosophy">Learn. Relearn. Unlearn.</p>
+        <div class="social-row" aria-label="Social media links">
+          <a href="#" class="social-icon" aria-label="Facebook">f</a>
+          <a href="#" class="social-icon" aria-label="Instagram">ig</a>
+          <a href="#" class="social-icon" aria-label="X / Twitter">x</a>
+          <a href="#" class="social-icon" aria-label="YouTube">yt</a>
+        </div>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="team.html">Team</a></li>
+          <li><a href="fixtures.html">Fixtures</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">More</h3>
+        <ul class="footer-links">
+          <li><a href="news.html">News</a></li>
+          <li><a href="media.html">Media</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact-wrap">
+        <h3 class="footer-heading">Contact</h3>
+        <ul class="footer-contact">
+          <li>Address — Placeholder</li>
+          <li>Phone — Placeholder</li>
+          <li>Email — Placeholder</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Learners FC. All rights reserved.</span>
+      <span>Learn. Relearn. Unlearn.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    "use strict";
+
+    /* 1. Mobile navigation toggle */
+    var navToggle = document.getElementById('navToggle');
+    var navLinks  = document.getElementById('navLinks');
+
+    navToggle.addEventListener('click', function(){
+      var isOpen = navLinks.classList.toggle('is-open');
+      navToggle.classList.toggle('is-open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    navLinks.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click', function(){
+        navLinks.classList.remove('is-open');
+        navToggle.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* 2. Dynamic copyright year */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* 3. Smooth scroll for in-page anchors */
+    document.querySelectorAll('a[href^="#"]').forEach(function(link){
+      link.addEventListener('click', function(e){
+        var targetId = link.getAttribute('href');
+        if(targetId.length > 1){
+          var target = document.querySelector(targetId);
+          if(target){
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+
+    /* 4. Scroll-reveal animations */
+    var revealEls = document.querySelectorAll('.reveal');
+    if('IntersectionObserver' in window){
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
+
+      revealEls.forEach(function(el){ observer.observe(el); });
+    } else {
+      revealEls.forEach(function(el){ el.classList.add('is-visible'); });
+    }
+
+    /* 5. Header background strengthens on scroll */
+    var header = document.querySelector('.site-header');
+    var onScroll = function(){
+      if(window.scrollY > 40){
+        header.style.background = 'rgba(8,28,20,0.97)';
+      } else {
+        header.style.background = 'rgba(14,42,31,0.92)';
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+
+  })();
+</script>
+
+</body>
+</html>

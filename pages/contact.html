@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Learners FC</title>
+<meta name="description" content="Get in touch with Learners FC — general enquiries, player and trial interest, partnerships, sponsorship and supporter communication.">
+
+<style>
+  /* ============================================
+     0. DESIGN TOKENS
+     (matches the Learners FC site-wide system)
+  ============================================ */
+  :root{
+    --color-primary:       #0E2A1F;
+    --color-primary-light: #1D4834;
+    --color-primary-dark:  #081C14;
+    --color-bg:            #FFFFFF;
+    --color-bg-alt:        #F4F5F1;
+    --color-accent:        #E3A130;
+    --color-text:          #12201A;
+    --color-text-muted:    #5C6A62;
+    --color-line:          #E1E4DD;
+    --color-white:         #FFFFFF;
+    --color-error:         #B3432E;
+    --color-error-bg:      #FBEDE9;
+
+    --font-display: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --container: 1180px;
+    --radius: 6px;
+    --transition: 220ms ease;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    color:var(--color-text);
+    background:var(--color-bg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  ul{ list-style:none; margin:0; padding:0; }
+  h1,h2,h3,h4{ margin:0; font-family:var(--font-display); letter-spacing:0.01em; }
+  p{ margin:0; }
+  button{ font-family:inherit; cursor:pointer; }
+  label{ display:block; }
+  input, select, textarea{ font-family:inherit; }
+
+  .container{ max-width:var(--container); margin:0 auto; padding:0 24px; }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:0.78rem; font-weight:700; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--color-accent);
+  }
+  .eyebrow::before{ content:""; width:28px; height:2px; background:var(--color-accent); display:inline-block; }
+
+  .section{ padding:96px 0; }
+  .section-alt{ background:var(--color-bg-alt); }
+  .section-dark{ background:var(--color-primary); color:var(--color-white); }
+  .section-head{ max-width:640px; margin-bottom:56px; }
+  .section-head.centered{ margin-left:auto; margin-right:auto; text-align:center; }
+  .section-title{
+    font-size:clamp(1.9rem, 3.4vw, 2.7rem);
+    line-height:1.08; margin-top:12px; text-transform:uppercase;
+  }
+  .section-sub{ margin-top:16px; color:var(--color-text-muted); font-size:1.02rem; max-width:56ch; }
+  .section-head.centered .section-sub{ margin-left:auto; margin-right:auto; }
+  .section-dark .section-sub{ color:#C7D3CC; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    padding:15px 30px; border-radius:var(--radius); font-weight:700;
+    font-size:0.82rem; letter-spacing:0.09em; text-transform:uppercase;
+    border:2px solid transparent;
+    transition:transform var(--transition), background var(--transition), color var(--transition), border-color var(--transition);
+    white-space:nowrap;
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn-primary{ background:var(--color-accent); color:var(--color-primary-dark); }
+  .btn-primary:hover{ background:#f0b04f; }
+  .btn-outline{ background:transparent; border-color:currentColor; color:inherit; }
+  .btn-outline:hover{ background:rgba(255,255,255,0.12); }
+  .btn-outline-dark{ background:transparent; border-color:var(--color-primary); color:var(--color-primary); }
+  .btn-outline-dark:hover{ background:var(--color-primary); color:var(--color-white); }
+  .btn:focus-visible, a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{
+    outline:3px solid var(--color-accent); outline-offset:2px;
+  }
+
+  .reveal{ opacity:0; transform:translateY(26px); transition:opacity 700ms ease, transform 700ms ease; }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+
+  /* ============================================
+     1. HEADER / NAV
+  ============================================ */
+  .site-header{
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    background:rgba(14,42,31,0.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    transition:background var(--transition);
+  }
+  .nav{ display:flex; align-items:center; justify-content:space-between; height:76px; }
+  .brand{ display:flex; align-items:center; gap:12px; color:var(--color-white); }
+  .brand-mark{
+    width:42px; height:42px; border-radius:50%; border:2px solid var(--color-accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:0.95rem; color:var(--color-accent); flex-shrink:0;
+  }
+  .brand-name{ font-family:var(--font-display); font-size:1.05rem; letter-spacing:0.06em; text-transform:uppercase; line-height:1.1; }
+  .brand-name span{ display:block; font-family:var(--font-body); font-weight:400; font-size:0.62rem; letter-spacing:0.22em; color:var(--color-accent); margin-top:2px; }
+
+  .nav-links{ display:flex; align-items:center; gap:2px; }
+  .nav-links a{
+    color:#D8DED9; font-size:0.82rem; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;
+    padding:10px 16px; border-radius:var(--radius);
+    transition:color var(--transition), background var(--transition);
+  }
+  .nav-links a:hover{ color:var(--color-white); background:rgba(255,255,255,0.06); }
+  .nav-links a.active{ color:var(--color-accent); }
+
+  .nav-toggle{
+    display:none; flex-direction:column; justify-content:center; gap:5px;
+    width:40px; height:40px; background:transparent; border:none; padding:0;
+  }
+  .nav-toggle span{ width:100%; height:2px; background:var(--color-white); transition:transform var(--transition), opacity var(--transition); }
+  .nav-toggle.is-open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2){ opacity:0; }
+  .nav-toggle.is-open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  /* ============================================
+     2. INNER-PAGE HERO
+  ============================================ */
+  .page-hero{
+    position:relative; min-height:56vh; min-height:56dvh;
+    display:flex; align-items:flex-end;
+    color:var(--color-white); overflow:hidden; background-color:var(--color-primary-dark);
+  }
+  .page-hero-media{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(180deg, rgba(8,28,20,0.55) 0%, rgba(8,28,20,0.82) 62%, rgba(8,28,20,0.98) 100%),
+      url('../images/club/contact-hero.jpg');
+    background-size:cover; background-position:center;
+  }
+  .page-hero-media::after{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 90px);
+    pointer-events:none;
+  }
+  .page-hero-content{ position:relative; z-index:2; max-width:760px; padding:150px 0 64px; }
+  .page-hero-eyebrow{
+    display:inline-block; font-size:0.8rem; font-weight:700; letter-spacing:0.24em;
+    text-transform:uppercase; color:var(--color-accent); margin-bottom:20px;
+  }
+  .page-hero-title{ font-size:clamp(2.4rem, 6vw, 4.4rem); line-height:0.98; text-transform:uppercase; }
+  .page-hero-lead{ margin-top:22px; font-size:clamp(1.02rem, 1.5vw, 1.2rem); max-width:54ch; color:#E4E9E4; }
+
+  /* ============================================
+     3. INTRO
+  ============================================ */
+  .intro-tags{ display:flex; flex-wrap:wrap; gap:10px; margin-top:28px; }
+  .intro-tag{
+    font-size:0.78rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;
+    padding:9px 16px; border-radius:999px; border:1px solid var(--color-line);
+    color:var(--color-text-muted); background:var(--color-white);
+  }
+
+  /* ============================================
+     4. CONTACT INFO CARDS
+  ============================================ */
+  .info-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:22px; }
+  .info-card{
+    position:relative; background:var(--color-white); border:1px solid var(--color-line);
+    border-radius:var(--radius); padding:32px 26px 28px; overflow:hidden;
+    transition:transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  }
+  .info-card::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:var(--color-accent); transform:scaleY(0); transform-origin:bottom; transition:transform 320ms ease;
+  }
+  .info-card:hover{ transform:translateY(-6px); box-shadow:0 18px 34px rgba(14,42,31,0.12); border-color:transparent; }
+  .info-card:hover::before{ transform:scaleY(1); }
+  .info-icon{
+    width:44px; height:44px; border-radius:50%; border:2px solid var(--color-accent);
+    display:flex; align-items:center; justify-content:center; color:var(--color-accent); flex-shrink:0;
+  }
+  .info-icon svg{ width:20px; height:20px; }
+  .info-label{ margin-top:20px; font-size:0.75rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--color-text-muted); }
+  .info-value{ margin-top:8px; font-size:1.05rem; font-weight:700; word-break:break-word; }
+  .info-note{ margin-top:8px; font-size:0.82rem; color:var(--color-text-muted); font-style:italic; }
+  .info-socials{ margin-top:20px; display:flex; gap:10px; }
+  .info-socials .social-icon{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--color-line);
+    display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:700;
+    color:var(--color-text-muted); transition:border-color var(--transition), color var(--transition);
+  }
+  .info-socials .social-icon:hover{ border-color:var(--color-accent); color:var(--color-accent); }
+
+  /* ============================================
+     5. ENQUIRY FORM
+  ============================================ */
+  .form-wrap{
+    background:var(--color-white); border:1px solid var(--color-line); border-radius:var(--radius);
+    padding:48px; max-width:820px; margin:0 auto;
+  }
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px 24px; }
+  .form-field{ display:flex; flex-direction:column; gap:8px; }
+  .form-field.full{ grid-column:1 / -1; }
+  .form-field label{
+    font-size:0.76rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--color-text);
+  }
+  .form-field .required{ color:var(--color-accent); }
+  .form-field input,
+  .form-field select,
+  .form-field textarea{
+    width:100%; padding:13px 15px; font-size:0.96rem; color:var(--color-text);
+    background:var(--color-bg-alt); border:1.5px solid var(--color-line); border-radius:var(--radius);
+    transition:border-color var(--transition), background var(--transition);
+  }
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus{
+    outline:none; border-color:var(--color-accent); background:var(--color-white);
+  }
+  .form-field textarea{ resize:vertical; min-height:140px; }
+  .form-field[data-invalid="true"] input,
+  .form-field[data-invalid="true"] select,
+  .form-field[data-invalid="true"] textarea{
+    border-color:var(--color-error); background:var(--color-error-bg);
+  }
+  .field-error{
+    font-size:0.8rem; color:var(--color-error); min-height:1em; display:none;
+  }
+  .form-field[data-invalid="true"] .field-error{ display:block; }
+  .form-actions{ margin-top:32px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .form-disclaimer{ font-size:0.82rem; color:var(--color-text-muted); max-width:44ch; }
+
+  .form-status{
+    margin-top:28px; padding:22px 24px; border-radius:var(--radius);
+    background:var(--color-bg-alt); border:1px solid var(--color-line); display:none;
+  }
+  .form-status.is-visible{ display:block; }
+  .form-status.success{ border-color:var(--color-accent); background:#FBF3E3; }
+  .form-status-title{ font-size:0.95rem; text-transform:uppercase; letter-spacing:0.06em; }
+  .form-status-text{ margin-top:8px; font-size:0.9rem; color:var(--color-text-muted); }
+  .form-status-note{ margin-top:10px; font-size:0.78rem; color:var(--color-text-muted); font-style:italic; }
+
+  /* ============================================
+     6. TRIAL / PARTNERSHIP PANELS
+  ============================================ */
+  .split-panels{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel{
+    border-radius:var(--radius); padding:44px 40px; position:relative; overflow:hidden;
+  }
+  .panel-trial{ background:var(--color-bg-alt); border:1px solid var(--color-line); color:var(--color-text); }
+  .panel-build{ background:var(--color-primary); color:var(--color-white); }
+  .panel-build::after{
+    content:""; position:absolute; right:-40px; bottom:-40px; width:200px; height:200px;
+    border:2px dashed rgba(227,161,48,0.25); border-radius:50%;
+  }
+  .panel-eyebrow{ font-size:0.75rem; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--color-accent); }
+  .panel-title{ margin-top:16px; font-size:clamp(1.5rem, 2.6vw, 1.9rem); text-transform:uppercase; line-height:1.1; }
+  .panel-text{ margin-top:16px; font-size:0.98rem; }
+  .panel-trial .panel-text{ color:var(--color-text-muted); }
+  .panel-build .panel-text{ color:#C7D3CC; }
+  .panel-list{ margin-top:20px; display:flex; flex-wrap:wrap; gap:8px; position:relative; z-index:1; }
+  .panel-list li{
+    font-size:0.78rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;
+    padding:8px 14px; border-radius:999px; border:1px solid rgba(255,255,255,0.22); color:#E4E9E4;
+  }
+  .panel-trial .panel-list li{ border-color:var(--color-line); color:var(--color-text-muted); }
+  .panel-cta{ margin-top:28px; position:relative; z-index:1; }
+
+  /* ============================================
+     7. FAQ ACCORDION
+  ============================================ */
+  .faq-list{ max-width:840px; margin:0 auto; }
+  .faq-item{ border-bottom:1px solid var(--color-line); }
+  .faq-item:first-child{ border-top:1px solid var(--color-line); }
+  .faq-question{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:20px;
+    background:transparent; border:none; text-align:left; padding:24px 4px;
+    font-family:var(--font-display); font-size:1.02rem; text-transform:uppercase; letter-spacing:0.01em;
+    color:var(--color-text);
+  }
+  .faq-index{ font-family:var(--font-display); font-size:0.9rem; color:var(--color-line); margin-right:16px; }
+  .faq-question-text{ flex:1; display:flex; align-items:baseline; }
+  .faq-icon{
+    flex-shrink:0; width:26px; height:26px; border-radius:50%; border:1.5px solid var(--color-accent);
+    color:var(--color-accent); display:flex; align-items:center; justify-content:center;
+    font-size:1rem; line-height:1; transition:transform var(--transition);
+  }
+  .faq-item[data-open="true"] .faq-icon{ transform:rotate(45deg); }
+  .faq-answer{
+    max-height:0; overflow:hidden; transition:max-height 320ms ease;
+  }
+  .faq-answer-inner{ padding:0 4px 26px; max-width:70ch; color:var(--color-text-muted); font-size:0.96rem; }
+
+  /* ============================================
+     8. LOCATION
+  ============================================ */
+  .location-panel{
+    background:var(--color-bg-alt); border:1px dashed var(--color-line); border-radius:var(--radius);
+    padding:64px 40px; text-align:center;
+  }
+  .location-icon{
+    width:56px; height:56px; margin:0 auto; border-radius:50%; border:2px solid var(--color-accent);
+    display:flex; align-items:center; justify-content:center; color:var(--color-accent);
+  }
+  .location-icon svg{ width:24px; height:24px; }
+  .location-title{ margin-top:22px; font-size:1.2rem; text-transform:uppercase; }
+  .location-text{ margin-top:10px; color:var(--color-text-muted); max-width:44ch; margin-left:auto; margin-right:auto; }
+
+  /* ============================================
+     9. FINAL CTA
+  ============================================ */
+  .cta{
+    background:var(--color-primary); color:var(--color-white); border-radius:var(--radius);
+    padding:72px 56px; text-align:center; position:relative; overflow:hidden;
+  }
+  .cta::before{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(227,161,48,0.05) 0 2px, transparent 2px 60px);
+  }
+  .cta-inner{ position:relative; z-index:1; max-width:640px; margin:0 auto; }
+  .cta-title{ font-size:clamp(2rem, 4vw, 3rem); text-transform:uppercase; }
+  .cta-text{ margin-top:16px; color:#C7D3CC; font-size:1.02rem; }
+  .cta-actions{ margin-top:34px; display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
+
+  /* ============================================
+     10. FOOTER
+  ============================================ */
+  .site-footer{ background:var(--color-primary-dark); color:#B9C4BC; padding:64px 0 28px; }
+  .footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr; gap:40px; }
+  .footer-brand .brand{ color:var(--color-white); margin-bottom:16px; }
+  .footer-statement{ font-size:0.92rem; max-width:34ch; color:#9AA79F; }
+  .footer-philosophy{ margin-top:18px; font-family:var(--font-display); font-size:0.85rem; letter-spacing:0.1em; color:var(--color-accent); text-transform:uppercase; }
+  .footer-heading{ font-size:0.78rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-white); margin-bottom:18px; }
+  .footer-links li{ margin-bottom:11px; }
+  .footer-links a{ font-size:0.9rem; color:#B9C4BC; transition:color var(--transition); }
+  .footer-links a:hover{ color:var(--color-accent); }
+  .footer-contact li{ margin-bottom:11px; font-size:0.9rem; }
+  .footer-contact .placeholder{ color:#7E8B83; font-style:italic; }
+  .social-row{ display:flex; gap:10px; margin-top:18px; }
+  .social-icon{
+    width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center; font-size:0.78rem;
+    transition:border-color var(--transition), color var(--transition);
+  }
+  .social-icon:hover{ border-color:var(--color-accent); color:var(--color-accent); }
+  .footer-bottom{
+    margin-top:56px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-size:0.82rem; color:#7E8B83;
+  }
+
+  /* ============================================
+     RESPONSIVE
+  ============================================ */
+  @media (max-width:1024px){
+    .info-grid{ grid-template-columns:repeat(2, 1fr); }
+    .form-grid{ grid-template-columns:1fr; }
+    .split-panels{ grid-template-columns:1fr; }
+    .footer-grid{ grid-template-columns:1fr 1fr; row-gap:36px; }
+  }
+
+  @media (max-width:760px){
+    .section{ padding:68px 0; }
+    .nav-links{
+      position:fixed; top:76px; left:0; right:0; flex-direction:column; align-items:stretch;
+      background:var(--color-primary-dark); padding:10px 24px 26px; gap:0;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      transform:translateY(-8px); opacity:0; pointer-events:none;
+      transition:opacity var(--transition), transform var(--transition);
+    }
+    .nav-links.is-open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+    .nav-links a{ padding:14px 4px; border-bottom:1px solid rgba(255,255,255,0.06); border-radius:0; }
+    .nav-toggle{ display:flex; }
+    .info-grid{ grid-template-columns:1fr; }
+    .form-wrap{ padding:30px 22px; }
+    .footer-grid{ grid-template-columns:1fr; }
+    .cta{ padding:52px 26px; }
+    .panel{ padding:36px 26px; }
+    .page-hero-content{ padding:130px 0 48px; }
+    .form-actions{ flex-direction:column; align-items:stretch; }
+    .form-actions .btn{ width:100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HEADER / NAVIGATION
+============================================ -->
+<header class="site-header">
+  <div class="container nav">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark">LFC</span>
+      <span class="brand-name">Learners FC<span>Learn · Relearn · Unlearn</span></span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="fixtures.html">Fixtures</a></li>
+        <li><a href="news.html">News</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="development.html">Development</a></li>
+        <li><a href="contact.html" class="active" aria-current="page">Contact</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============================================
+     PAGE HERO
+============================================ -->
+<section class="page-hero">
+  <div class="page-hero-media" role="img" aria-label="Learners FC players on the training pitch"></div>
+  <div class="container page-hero-content">
+    <span class="page-hero-eyebrow">Contact Learners FC</span>
+    <h1 class="page-hero-title">Let's Connect</h1>
+    <p class="page-hero-lead">Whether you want to join the journey, support the team or simply learn more, we'd love to hear from you.</p>
+  </div>
+</section>
+
+<!-- ============================================
+     CONTACT INTRODUCTION
+============================================ -->
+<section class="section" id="introduction">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Get In Touch</span>
+      <h2 class="section-title">Get In Touch With Learners FC</h2>
+      <p class="section-sub">Learners FC is being built from the ground up, and every conversation helps shape that journey. We welcome messages from anyone who wants to be part of it.</p>
+    </div>
+    <ul class="intro-tags reveal" aria-label="Who we welcome messages from">
+      <li class="intro-tag">Players</li>
+      <li class="intro-tag">Parents &amp; Guardians</li>
+      <li class="intro-tag">Supporters</li>
+      <li class="intro-tag">Coaches</li>
+      <li class="intro-tag">Potential Partners</li>
+      <li class="intro-tag">Sponsors</li>
+      <li class="intro-tag">Football Communities</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================
+     CONTACT INFORMATION
+============================================ -->
+<section class="section section-alt" id="contact-info">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Reach Us</span>
+      <h2 class="section-title">Contact Information</h2>
+      <p class="section-sub">Official contact details are being finalised. The placeholders below will be updated once confirmed.</p>
+    </div>
+
+    <div class="info-grid">
+      <article class="info-card reveal">
+        <span class="info-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </span>
+        <p class="info-label">Phone</p>
+        <p class="info-value">+233 XX XXX XXXX</p>
+        <p class="info-note">Placeholder — official number coming soon</p>
+      </article>
+
+      <article class="info-card reveal">
+        <span class="info-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" stroke="none"/><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+        </span>
+        <p class="info-label">Email</p>
+        <p class="info-value"><a href="mailto:hello@learnersfc.com">hello@learnersfc.com</a></p>
+        <p class="info-note">Placeholder — for demonstration purposes</p>
+      </article>
+
+      <article class="info-card reveal">
+        <span class="info-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </span>
+        <p class="info-label">Location</p>
+        <p class="info-value">Location coming soon</p>
+        <p class="info-note">Training/club location to be confirmed</p>
+      </article>
+
+      <article class="info-card reveal">
+        <span class="info-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </span>
+        <p class="info-label">Follow Learners FC</p>
+        <p class="info-note" style="margin-top:8px;">Official accounts coming soon</p>
+        <div class="info-socials" aria-label="Social media placeholders">
+          <a href="#" class="social-icon" aria-label="Instagram (coming soon)">ig</a>
+          <a href="#" class="social-icon" aria-label="Facebook (coming soon)">f</a>
+          <a href="#" class="social-icon" aria-label="TikTok (coming soon)">tt</a>
+          <a href="#" class="social-icon" aria-label="YouTube (coming soon)">yt</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     ENQUIRY FORM
+============================================ -->
+<section class="section" id="enquiry-form">
+  <div class="container">
+    <div class="section-head centered reveal" style="margin-left:auto;margin-right:auto;">
+      <span class="eyebrow">Send A Message</span>
+      <h2 class="section-title">Start The Conversation</h2>
+      <p class="section-sub">Tell us who you are and what you'd like to talk about — we'll take it from there.</p>
+    </div>
+
+    <div class="form-wrap reveal">
+      <form id="contactForm" novalidate>
+        <div class="form-grid">
+          <div class="form-field full" id="field-name" data-invalid="false">
+            <label for="fullName">Full Name <span class="required">*</span></label>
+            <input type="text" id="fullName" name="fullName" autocomplete="name" aria-required="true" aria-describedby="error-name">
+            <span class="field-error" id="error-name" role="alert">Please enter your full name.</span>
+          </div>
+
+          <div class="form-field" id="field-email" data-invalid="false">
+            <label for="email">Email Address <span class="required">*</span></label>
+            <input type="email" id="email" name="email" autocomplete="email" aria-required="true" aria-describedby="error-email">
+            <span class="field-error" id="error-email" role="alert">Please enter a valid email address.</span>
+          </div>
+
+          <div class="form-field" id="field-phone" data-invalid="false">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" aria-describedby="error-phone">
+            <span class="field-error" id="error-phone" role="alert"></span>
+          </div>
+
+          <div class="form-field full" id="field-type" data-invalid="false">
+            <label for="enquiryType">Enquiry Type <span class="required">*</span></label>
+            <select id="enquiryType" name="enquiryType" aria-required="true" aria-describedby="error-type">
+              <option value="" selected disabled>Select an enquiry type</option>
+              <option value="general">General Enquiry</option>
+              <option value="trial">Player / Trial</option>
+              <option value="parent">Parent / Guardian</option>
+              <option value="partnership">Partnership</option>
+              <option value="sponsorship">Sponsorship</option>
+              <option value="media">Media</option>
+              <option value="other">Other</option>
+            </select>
+            <span class="field-error" id="error-type" role="alert">Please select an enquiry type.</span>
+          </div>
+
+          <div class="form-field full" id="field-message" data-invalid="false">
+            <label for="message">Message <span class="required">*</span></label>
+            <textarea id="message" name="message" aria-required="true" aria-describedby="error-message"></textarea>
+            <span class="field-error" id="error-message" role="alert">Please enter a message.</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Send Message</button>
+          <p class="form-disclaimer">This is a frontend demonstration. No message is sent until a backend or form service is connected.</p>
+        </div>
+
+        <div class="form-status" id="formStatus" role="status" aria-live="polite">
+          <p class="form-status-title" id="formStatusTitle">Thank You</p>
+          <p class="form-status-text" id="formStatusText">Your message has been prepared successfully. Learners FC will be in touch once the contact system is connected.</p>
+          <p class="form-status-note">Frontend demonstration only — no email has actually been sent.</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     TRIAL + PARTNERSHIP / SPONSORSHIP
+============================================ -->
+<section class="section section-alt" id="join-and-partner">
+  <div class="container">
+    <div class="split-panels">
+      <article class="panel panel-trial reveal">
+        <span class="panel-eyebrow">Players</span>
+        <h2 class="panel-title">Interested In Joining?</h2>
+        <p class="panel-text">If you're interested in becoming part of Learners FC, get in touch and tell us a little about yourself.</p>
+        <div class="panel-cta">
+          <a href="#enquiry-form" class="btn btn-outline-dark" data-scroll-to-form>Enquire About Joining</a>
+        </div>
+      </article>
+
+      <article class="panel panel-build reveal">
+        <span class="panel-eyebrow">Partners &amp; Sponsors</span>
+        <h2 class="panel-title">Build With Us</h2>
+        <p class="panel-text">As Learners FC grows, there may be opportunities for organizations and individuals to support the club.</p>
+        <ul class="panel-list">
+          <li>Sponsorship</li>
+          <li>Partnerships</li>
+          <li>Equipment Support</li>
+          <li>Community Initiatives</li>
+          <li>Football Development</li>
+        </ul>
+        <div class="panel-cta">
+          <a href="#enquiry-form" class="btn btn-primary" id="partnershipCta">Discuss A Partnership</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FAQ
+============================================ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-head centered reveal" style="margin-left:auto;margin-right:auto;">
+      <span class="eyebrow">Good To Know</span>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+    </div>
+
+    <div class="faq-list reveal">
+      <div class="faq-item" data-open="false">
+        <h3>
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question-text"><span class="faq-index">01</span>How can I contact Learners FC?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+        </h3>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Use the enquiry form on this page, or reach out via the email placeholder listed above. Official phone and social channels will be added once confirmed.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <h3>
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question-text"><span class="faq-index">02</span>How can a player enquire about joining?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+        </h3>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Select "Player / Trial" as the enquiry type on the form and tell us a little about yourself. Please contact Learners FC directly for the latest information on trial dates, fees or age requirements.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <h3>
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question-text"><span class="faq-index">03</span>Does Learners FC accept sponsorship opportunities?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+        </h3>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Yes — as the club grows there may be room for sponsors to get involved. Please contact Learners FC directly for the latest information.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <h3>
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question-text"><span class="faq-index">04</span>Can organizations partner with Learners FC?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+        </h3>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Organizations interested in partnering with Learners FC are welcome to reach out through the form. Please contact Learners FC directly for the latest information.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <h3>
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question-text"><span class="faq-index">05</span>Where is Learners FC based?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+        </h3>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Location details are coming soon. Please contact Learners FC directly for the latest information.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     LOCATION
+============================================ -->
+<section class="section section-alt" id="location">
+  <div class="container">
+    <div class="section-head centered reveal" style="margin-left:auto;margin-right:auto;">
+      <span class="eyebrow">Find Us</span>
+      <h2 class="section-title">Find Us</h2>
+    </div>
+    <div class="location-panel reveal">
+      <span class="location-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </span>
+      <p class="location-title">Location Information Coming Soon</p>
+      <p class="location-text">A map will be added here once Learners FC's official training or club location is confirmed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FINAL CTA
+============================================ -->
+<section class="section" id="final-cta">
+  <div class="container">
+    <div class="cta reveal">
+      <div class="cta-inner">
+        <h2 class="cta-title">The Journey Starts With A Step.</h2>
+        <p class="cta-text">Learn. Relearn. Unlearn. Grow together.</p>
+        <div class="cta-actions">
+          <a href="team.html" class="btn btn-primary">Meet Learners FC</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTER
+============================================ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="brand">
+          <span class="brand-mark">LFC</span>
+          <span class="brand-name">Learners FC</span>
+        </a>
+        <p class="footer-statement">Preparing the next generation to be ready for anything — on the pitch and in life.</p>
+        <p class="footer-philosophy">Learn. Relearn. Unlearn.</p>
+        <div class="social-row" aria-label="Social media links">
+          <a href="#" class="social-icon" aria-label="Facebook">f</a>
+          <a href="#" class="social-icon" aria-label="Instagram">ig</a>
+          <a href="#" class="social-icon" aria-label="TikTok">tt</a>
+          <a href="#" class="social-icon" aria-label="YouTube">yt</a>
+        </div>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="team.html">Team</a></li>
+          <li><a href="fixtures.html">Fixtures</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">More</h3>
+        <ul class="footer-links">
+          <li><a href="news.html">News</a></li>
+          <li><a href="media.html">Media</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact-wrap">
+        <h3 class="footer-heading">Contact</h3>
+        <ul class="footer-contact">
+          <li class="placeholder">Address — Placeholder</li>
+          <li class="placeholder">Phone — Placeholder</li>
+          <li><a href="mailto:hello@learnersfc.com">hello@learnersfc.com</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Learners FC. All rights reserved.</span>
+      <span>Learn. Relearn. Unlearn.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    "use strict";
+
+    /* 1. Mobile navigation toggle */
+    var navToggle = document.getElementById('navToggle');
+    var navLinks  = document.getElementById('navLinks');
+
+    navToggle.addEventListener('click', function(){
+      var isOpen = navLinks.classList.toggle('is-open');
+      navToggle.classList.toggle('is-open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    navLinks.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click', function(){
+        navLinks.classList.remove('is-open');
+        navToggle.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* 2. Dynamic copyright year */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* 3. Smooth scroll for in-page anchors */
+    document.querySelectorAll('a[href^="#"]').forEach(function(link){
+      link.addEventListener('click', function(e){
+        var targetId = link.getAttribute('href');
+        if(targetId.length > 1){
+          var target = document.querySelector(targetId);
+          if(target){
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+
+    /* 4. Scroll-reveal animations */
+    var revealEls = document.querySelectorAll('.reveal');
+    if('IntersectionObserver' in window){
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
+      revealEls.forEach(function(el){ observer.observe(el); });
+    } else {
+      revealEls.forEach(function(el){ el.classList.add('is-visible'); });
+    }
+
+    /* 5. Header background strengthens on scroll */
+    var header = document.querySelector('.site-header');
+    var onScroll = function(){
+      header.style.background = window.scrollY > 40 ? 'rgba(8,28,20,0.97)' : 'rgba(14,42,31,0.92)';
+    };
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+
+    /* 6. FAQ accordion */
+    document.querySelectorAll('.faq-item').forEach(function(item){
+      var button = item.querySelector('.faq-question');
+      var answer = item.querySelector('.faq-answer');
+
+      button.addEventListener('click', function(){
+        var isOpen = item.getAttribute('data-open') === 'true';
+
+        // Close any other open items for a single-open accordion
+        document.querySelectorAll('.faq-item').forEach(function(other){
+          if(other !== item){
+            other.setAttribute('data-open', 'false');
+            other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+            other.querySelector('.faq-answer').style.maxHeight = null;
+          }
+        });
+
+        if(isOpen){
+          item.setAttribute('data-open', 'false');
+          button.setAttribute('aria-expanded', 'false');
+          answer.style.maxHeight = null;
+        } else {
+          item.setAttribute('data-open', 'true');
+          button.setAttribute('aria-expanded', 'true');
+          answer.style.maxHeight = answer.scrollHeight + 'px';
+        }
+      });
+    });
+
+    /* 7. Partnership CTA — scroll to form and preselect "Partnership" */
+    var partnershipCta = document.getElementById('partnershipCta');
+    var enquiryType = document.getElementById('enquiryType');
+    if(partnershipCta && enquiryType){
+      partnershipCta.addEventListener('click', function(){
+        enquiryType.value = 'partnership';
+      });
+    }
+
+    /* 8. Contact form validation */
+    var form = document.getElementById('contactForm');
+    var formStatus = document.getElementById('formStatus');
+
+    var fields = {
+      fullName:   { wrap: document.getElementById('field-name'),    el: document.getElementById('fullName') },
+      email:      { wrap: document.getElementById('field-email'),   el: document.getElementById('email') },
+      enquiryType:{ wrap: document.getElementById('field-type'),    el: document.getElementById('enquiryType') },
+      message:    { wrap: document.getElementById('field-message'), el: document.getElementById('message') }
+    };
+
+    function isValidEmail(value){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function setInvalid(fieldWrap, invalid){
+      fieldWrap.setAttribute('data-invalid', invalid ? 'true' : 'false');
+    }
+
+    function validateForm(){
+      var valid = true;
+
+      if(fields.fullName.el.value.trim() === ''){
+        setInvalid(fields.fullName.wrap, true);
+        valid = false;
+      } else {
+        setInvalid(fields.fullName.wrap, false);
+      }
+
+      if(!isValidEmail(fields.email.el.value.trim())){
+        setInvalid(fields.email.wrap, true);
+        valid = false;
+      } else {
+        setInvalid(fields.email.wrap, false);
+      }
+
+      if(fields.enquiryType.el.value === ''){
+        setInvalid(fields.enquiryType.wrap, true);
+        valid = false;
+      } else {
+        setInvalid(fields.enquiryType.wrap, false);
+      }
+
+      if(fields.message.el.value.trim() === ''){
+        setInvalid(fields.message.wrap, true);
+        valid = false;
+      } else {
+        setInvalid(fields.message.wrap, false);
+      }
+
+      return valid;
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      formStatus.classList.remove('is-visible', 'success');
+
+      var valid = validateForm();
+
+      if(!valid){
+        var firstInvalid = form.querySelector('[data-invalid="true"]');
+        if(firstInvalid){
+          firstInvalid.querySelector('input, select, textarea').focus();
+        }
+        return;
+      }
+
+      formStatus.classList.add('is-visible', 'success');
+      formStatus.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      form.reset();
+    });
+
+    // Live re-validation once a field has already been marked invalid
+    Object.keys(fields).forEach(function(key){
+      var field = fields[key];
+      field.el.addEventListener('input', function(){
+        if(field.wrap.getAttribute('data-invalid') === 'true'){
+          validateForm();
+        }
+      });
+      field.el.addEventListener('change', function(){
+        if(field.wrap.getAttribute('data-invalid') === 'true'){
+          validateForm();
+        }
+      });
+    });
+
+  })();
+</script>
+
+</body>
+</html>

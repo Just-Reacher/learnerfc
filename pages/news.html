@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News — Learners FC</title>
+<meta name="description" content="The latest updates, stories and match reports from Learners FC — follow the journey, one lesson at a time.">
+
+<style>
+  /* ============================================
+     0. DESIGN TOKENS — identical across the site
+  ============================================ */
+  :root{
+    --color-primary:       #0E2A1F;
+    --color-primary-light: #1D4834;
+    --color-primary-dark:  #081C14;
+    --color-bg:            #FFFFFF;
+    --color-bg-alt:        #F4F5F1;
+    --color-accent:        #E3A130;
+    --color-text:          #12201A;
+    --color-text-muted:    #5C6A62;
+    --color-line:          #E1E4DD;
+    --color-white:         #FFFFFF;
+
+    --font-display: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --container: 1180px;
+    --radius: 6px;
+    --transition: 220ms ease;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; font-family:var(--font-body); color:var(--color-text);
+    background:var(--color-bg); line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  ul{ list-style:none; margin:0; padding:0; }
+  h1,h2,h3,h4{ margin:0; font-family:var(--font-display); letter-spacing:0.01em; }
+  p{ margin:0; }
+  button{ font-family:inherit; cursor:pointer; }
+  input{ font-family:inherit; }
+
+  .container{ max-width:var(--container); margin:0 auto; padding:0 24px; }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:0.78rem; font-weight:700; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--color-accent);
+  }
+  .eyebrow::before{ content:""; width:28px; height:2px; background:var(--color-accent); display:inline-block; }
+
+  .section{ padding:96px 0; }
+  .section-alt{ background:var(--color-bg-alt); }
+  .section-dark{ background:var(--color-primary); color:var(--color-white); }
+  .section-head{ max-width:680px; margin-bottom:48px; }
+  .section-title{ font-size:clamp(1.9rem, 3.4vw, 2.7rem); line-height:1.08; margin-top:12px; text-transform:uppercase; }
+  .section-sub{ margin-top:16px; color:var(--color-text-muted); font-size:1.02rem; max-width:56ch; }
+  .section-dark .section-sub{ color:#C7D3CC; }
+  .section-head-row{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    gap:24px; flex-wrap:wrap; margin-bottom:36px;
+  }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    padding:15px 30px; border-radius:var(--radius); font-weight:700;
+    font-size:0.82rem; letter-spacing:0.09em; text-transform:uppercase;
+    border:2px solid transparent;
+    transition:transform var(--transition), background var(--transition), color var(--transition), border-color var(--transition);
+    white-space:nowrap;
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn-primary{ background:var(--color-accent); color:var(--color-primary-dark); }
+  .btn-primary:hover{ background:#f0b04f; }
+  .btn-outline{ background:transparent; border-color:currentColor; color:inherit; }
+  .btn-outline:hover{ background:rgba(255,255,255,0.12); }
+  .btn-outline-dark{ background:transparent; border-color:var(--color-primary); color:var(--color-primary); }
+  .btn-outline-dark:hover{ background:var(--color-primary); color:var(--color-white); }
+
+  .reveal{ opacity:0; transform:translateY(26px); transition:opacity 700ms ease, transform 700ms ease; }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+
+  /* ============================================
+     HEADER / NAV
+  ============================================ */
+  .site-header{
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    background:rgba(14,42,31,0.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    transition:background var(--transition);
+  }
+  .nav{ display:flex; align-items:center; justify-content:space-between; height:76px; }
+  .brand{ display:flex; align-items:center; gap:12px; color:var(--color-white); }
+  .brand-mark{
+    width:42px; height:42px; border-radius:50%; border:2px solid var(--color-accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:0.95rem; color:var(--color-accent); flex-shrink:0;
+  }
+  .brand-name{ font-family:var(--font-display); font-size:1.05rem; letter-spacing:0.06em; text-transform:uppercase; line-height:1.1; }
+  .brand-name span{ display:block; font-family:var(--font-body); font-weight:400; font-size:0.62rem; letter-spacing:0.22em; color:var(--color-accent); margin-top:2px; }
+
+  .nav-links{ display:flex; align-items:center; gap:2px; }
+  .nav-links a{
+    color:#D8DED9; font-size:0.82rem; font-weight:600; letter-spacing:0.05em;
+    text-transform:uppercase; padding:10px 16px; border-radius:var(--radius);
+    transition:color var(--transition), background var(--transition);
+  }
+  .nav-links a:hover{ color:var(--color-white); background:rgba(255,255,255,0.06); }
+  .nav-links a.active{ color:var(--color-accent); }
+
+  .nav-toggle{
+    display:none; flex-direction:column; justify-content:center; gap:5px;
+    width:40px; height:40px; background:transparent; border:none; padding:0;
+  }
+  .nav-toggle span{ width:100%; height:2px; background:var(--color-white); transition:transform var(--transition), opacity var(--transition); }
+  .nav-toggle.is-open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2){ opacity:0; }
+  .nav-toggle.is-open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  /* ============================================
+     PAGE HERO
+  ============================================ */
+  .page-hero{
+    position:relative; min-height:50vh; display:flex; align-items:flex-end;
+    color:var(--color-white); overflow:hidden; background-color:var(--color-primary-dark);
+    padding-top:76px;
+  }
+  .page-hero-media{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(180deg, rgba(8,28,20,0.55) 0%, rgba(8,28,20,0.82) 60%, rgba(8,28,20,0.97) 100%),
+      url('../images/club/news-hero.jpg');
+    background-size:cover; background-position:center;
+  }
+  .page-hero-media::after{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 90px);
+    pointer-events:none;
+  }
+  .page-hero-content{ position:relative; z-index:2; padding:56px 0 48px; max-width:720px; }
+  .page-hero-eyebrow{
+    display:inline-block; font-size:0.8rem; font-weight:700; letter-spacing:0.24em;
+    text-transform:uppercase; color:var(--color-accent); margin-bottom:18px;
+  }
+  .page-hero-title{ font-size:clamp(2rem, 5.4vw, 3.4rem); line-height:1.02; text-transform:uppercase; }
+  .page-hero-lead{ margin-top:18px; font-size:clamp(1rem, 1.4vw, 1.15rem); max-width:52ch; color:#E4E9E4; }
+
+  /* ============================================
+     FEATURED STORY
+  ============================================ */
+  .featured-story{
+    display:grid; grid-template-columns:1.1fr 1fr;
+    background:var(--color-white); border:1px solid var(--color-line);
+    border-radius:var(--radius); overflow:hidden;
+  }
+  .featured-photo{
+    aspect-ratio:4/3;
+    background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary));
+    position:relative;
+  }
+  .featured-photo img{ width:100%; height:100%; object-fit:cover; }
+  .featured-body{ padding:44px; display:flex; flex-direction:column; justify-content:center; }
+  .featured-meta{ display:flex; gap:12px; align-items:center; }
+  .cat-pill{
+    font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    padding:5px 12px; border-radius:20px; background:var(--color-bg-alt); color:var(--color-primary);
+  }
+  .featured-meta .date{ font-size:0.82rem; color:var(--color-text-muted); }
+  .featured-title{ margin-top:16px; font-size:clamp(1.5rem, 2.6vw, 2rem); line-height:1.15; text-transform:uppercase; }
+  .featured-excerpt{ margin-top:14px; font-size:1rem; color:var(--color-text-muted); }
+  .featured-link{
+    margin-top:24px; display:inline-flex; align-items:center; gap:8px;
+    font-size:0.82rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;
+    color:var(--color-primary); border-bottom:2px solid var(--color-accent); padding-bottom:2px; width:fit-content;
+  }
+
+  /* ============================================
+     SEARCH + FILTERS
+  ============================================ */
+  .news-controls{
+    display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+    margin-bottom:36px;
+  }
+  .search-box{
+    position:relative; flex:1; min-width:240px; max-width:360px;
+  }
+  .search-box input{
+    width:100%; padding:13px 18px 13px 42px;
+    border:1px solid var(--color-line); border-radius:30px;
+    font-size:0.9rem; color:var(--color-text);
+    background:var(--color-white);
+    transition:border-color var(--transition);
+  }
+  .search-box input:focus{ outline:none; border-color:var(--color-accent); }
+  .search-icon{
+    position:absolute; left:16px; top:50%; transform:translateY(-50%);
+    color:var(--color-text-muted); font-size:0.9rem; pointer-events:none;
+  }
+  .filter-row{ display:flex; flex-wrap:wrap; gap:10px; }
+  .filter-btn{
+    padding:10px 20px; border-radius:30px; border:1px solid var(--color-line);
+    background:var(--color-white); font-size:0.78rem; font-weight:700;
+    letter-spacing:0.06em; text-transform:uppercase; color:var(--color-text-muted);
+    transition:background var(--transition), color var(--transition), border-color var(--transition);
+  }
+  .filter-btn:hover{ border-color:var(--color-primary); color:var(--color-primary); }
+  .filter-btn.is-active{ background:var(--color-primary); border-color:var(--color-primary); color:var(--color-white); }
+
+  /* ============================================
+     NEWS GRID / CARDS
+  ============================================ */
+  .news-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  .news-card{
+    background:var(--color-white); border:1px solid var(--color-line);
+    border-radius:var(--radius); overflow:hidden;
+    transition:transform var(--transition), box-shadow var(--transition);
+  }
+  .news-card:hover{ transform:translateY(-6px); box-shadow:0 18px 32px rgba(14,42,31,0.1); }
+  .news-photo{
+    aspect-ratio:16/10; overflow:hidden;
+    background:linear-gradient(155deg, #dfe4dc, #c9d1c5);
+    display:flex; align-items:center; justify-content:center;
+    color:#8a948a; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.08em;
+  }
+  .news-photo img{ width:100%; height:100%; object-fit:cover; transition:transform 450ms ease; }
+  .news-card:hover .news-photo img{ transform:scale(1.07); }
+  .news-body{ padding:22px 22px 26px; }
+  .news-meta{
+    display:flex; gap:12px; align-items:center;
+    font-size:0.75rem; font-weight:700; letter-spacing:0.06em;
+    text-transform:uppercase; color:var(--color-accent);
+  }
+  .news-meta .dot{ width:4px; height:4px; border-radius:50%; background:var(--color-text-muted); }
+  .news-meta .date{ color:var(--color-text-muted); font-weight:600; }
+  .news-title{ margin-top:12px; font-size:1.08rem; line-height:1.28; text-transform:uppercase; }
+  .news-excerpt{ margin-top:10px; font-size:0.9rem; color:var(--color-text-muted); }
+  .news-link{
+    margin-top:16px; display:inline-flex; align-items:center; gap:8px;
+    font-size:0.8rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;
+    color:var(--color-primary); border-bottom:2px solid var(--color-accent); padding-bottom:2px;
+  }
+
+  .load-more-wrap{ text-align:center; margin-top:44px; }
+
+  .empty-state{
+    text-align:center; padding:64px 24px;
+    background:var(--color-bg-alt); border:1px dashed var(--color-line);
+    border-radius:var(--radius); display:none;
+  }
+  .empty-state.is-visible{ display:block; }
+  .empty-state-title{ font-family:var(--font-display); font-size:1.2rem; text-transform:uppercase; color:var(--color-primary); }
+  .empty-state-text{ margin-top:10px; font-size:0.92rem; color:var(--color-text-muted); max-width:44ch; margin-left:auto; margin-right:auto; }
+
+  /* ============================================
+     FROM THE PITCH (match report)
+  ============================================ */
+  .match-report-card{
+    display:grid; grid-template-columns:1fr 1fr;
+    background:var(--color-primary); color:var(--color-white);
+    border-radius:var(--radius); overflow:hidden;
+  }
+  .match-report-photo{
+    background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary-dark));
+    min-height:280px;
+  }
+  .match-report-body{ padding:44px; }
+  .match-report-score{ font-family:var(--font-display); font-size:1.6rem; text-transform:uppercase; margin-top:16px; color:#B9C4BC; }
+  .match-report-title{ margin-top:18px; font-size:1.3rem; text-transform:uppercase; line-height:1.2; }
+  .match-report-meta{ margin-top:14px; font-size:0.88rem; color:#B9C4BC; }
+
+  /* ============================================
+     DEVELOPMENT STORIES
+  ============================================ */
+  .dev-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; }
+  .dev-card{
+    background:var(--color-white); border:1px solid var(--color-line);
+    border-radius:var(--radius); padding:26px;
+    transition:transform var(--transition), box-shadow var(--transition);
+  }
+  .dev-card:hover{ transform:translateY(-5px); box-shadow:0 14px 26px rgba(14,42,31,0.1); }
+  .dev-card-title{ font-size:1rem; text-transform:uppercase; letter-spacing:0.02em; color:var(--color-primary); }
+  .dev-card-text{ margin-top:10px; font-size:0.88rem; color:var(--color-text-muted); }
+
+  /* ============================================
+     CTA
+  ============================================ */
+  .cta{
+    background:var(--color-primary); color:var(--color-white);
+    border-radius:var(--radius); padding:72px 56px; text-align:center;
+    position:relative; overflow:hidden;
+  }
+  .cta::before{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(227,161,48,0.05) 0 2px, transparent 2px 60px);
+  }
+  .cta-inner{ position:relative; z-index:1; max-width:640px; margin:0 auto; }
+  .cta-title{ font-size:clamp(2rem, 4vw, 3rem); text-transform:uppercase; }
+  .cta-text{ margin-top:16px; color:#C7D3CC; font-size:1.02rem; }
+  .cta-actions{ margin-top:34px; display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
+
+  /* ============================================
+     FOOTER
+  ============================================ */
+  .site-footer{ background:var(--color-primary-dark); color:#B9C4BC; padding:64px 0 28px; }
+  .footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr; gap:40px; }
+  .footer-brand .brand{ color:var(--color-white); margin-bottom:16px; }
+  .footer-statement{ font-size:0.92rem; max-width:34ch; color:#9AA79F; }
+  .footer-philosophy{ margin-top:18px; font-family:var(--font-display); font-size:0.85rem; letter-spacing:0.1em; color:var(--color-accent); text-transform:uppercase; }
+  .footer-heading{ font-size:0.78rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-white); margin-bottom:18px; }
+  .footer-links li{ margin-bottom:11px; }
+  .footer-links a{ font-size:0.9rem; color:#B9C4BC; transition:color var(--transition); }
+  .footer-links a:hover{ color:var(--color-accent); }
+  .footer-contact li{ margin-bottom:11px; font-size:0.9rem; }
+  .social-row{ display:flex; gap:10px; margin-top:18px; }
+  .social-icon{
+    width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center; font-size:0.78rem;
+    transition:border-color var(--transition), color var(--transition);
+  }
+  .social-icon:hover{ border-color:var(--color-accent); color:var(--color-accent); }
+  .footer-bottom{
+    margin-top:56px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    font-size:0.82rem; color:#7E8B83;
+  }
+
+  /* ============================================
+     RESPONSIVE
+  ============================================ */
+  @media (max-width:1024px){
+    .featured-story{ grid-template-columns:1fr; }
+    .news-grid{ grid-template-columns:1fr 1fr; }
+    .match-report-card{ grid-template-columns:1fr; }
+    .match-report-photo{ min-height:200px; }
+    .dev-grid{ grid-template-columns:1fr 1fr; }
+    .footer-grid{ grid-template-columns:1fr 1fr; row-gap:36px; }
+  }
+
+  @media (max-width:760px){
+    .section{ padding:64px 0; }
+    .nav-links{
+      position:fixed; top:76px; left:0; right:0;
+      flex-direction:column; align-items:stretch;
+      background:var(--color-primary-dark);
+      padding:10px 24px 26px; gap:0;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      transform:translateY(-8px); opacity:0; pointer-events:none;
+      transition:opacity var(--transition), transform var(--transition);
+    }
+    .nav-links.is-open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+    .nav-links a{ padding:14px 4px; border-bottom:1px solid rgba(255,255,255,0.06); border-radius:0; }
+    .nav-toggle{ display:flex; }
+
+    .news-controls{ flex-direction:column; align-items:stretch; }
+    .search-box{ max-width:none; }
+    .news-grid{ grid-template-columns:1fr; }
+    .dev-grid{ grid-template-columns:1fr; }
+    .featured-body{ padding:28px; }
+    .footer-grid{ grid-template-columns:1fr; }
+    .cta{ padding:52px 26px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HEADER / NAVIGATION
+============================================ -->
+<header class="site-header">
+  <div class="container nav">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark">LFC</span>
+      <span class="brand-name">Learners FC<span>Learn · Relearn · Unlearn</span></span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="fixtures.html">Fixtures</a></li>
+        <li><a href="news.html" class="active" aria-current="page">News</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="development.html">Development</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============================================
+     PAGE HERO
+============================================ -->
+<section class="page-hero">
+  <div class="page-hero-media" role="img" aria-label="Learners FC club activity"></div>
+  <div class="container page-hero-content">
+    <span class="page-hero-eyebrow">Club News</span>
+    <h1 class="page-hero-title">Latest From Learners FC</h1>
+    <p class="page-hero-lead">Follow the journey, one lesson at a time.</p>
+  </div>
+</section>
+
+<!-- ============================================
+     FEATURED STORY
+============================================ -->
+<section class="section" id="featured">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Top Story</span>
+      <h2 class="section-title">Featured Story</h2>
+    </div>
+
+    <article class="featured-story reveal">
+      <div class="featured-photo">
+        <img src="../images/news/featured.jpg" alt="The Learners FC Journey Begins" loading="lazy"
+             onerror="this.style.display='none';">
+      </div>
+      <div class="featured-body">
+        <div class="featured-meta">
+          <span class="cat-pill">Club</span>
+          <span class="date">Date — Placeholder</span>
+        </div>
+        <h3 class="featured-title">The Learners FC Journey Begins</h3>
+        <p class="featured-excerpt">Learners FC is officially underway — built on a simple idea: learn the fundamentals, relearn the habits that matter, and unlearn everything that holds a player back. This is a placeholder story marking the start of the club's news coverage; real updates will replace it here.</p>
+        <a href="#" class="featured-link">Read More →</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============================================
+     NEWS CONTROLS + GRID
+============================================ -->
+<section class="section section-alt" id="news-grid-section">
+  <div class="container">
+    <div class="section-head-row reveal">
+      <div>
+        <span class="eyebrow">All Stories</span>
+        <h2 class="section-title">Latest Stories</h2>
+      </div>
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="newsSearch" placeholder="Search Learners FC news..." aria-label="Search Learners FC news">
+      </div>
+    </div>
+
+    <div class="filter-row reveal" role="group" aria-label="Filter news by category" style="margin-bottom:36px;">
+      <button class="filter-btn is-active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="club">Club</button>
+      <button class="filter-btn" data-filter="matches">Matches</button>
+      <button class="filter-btn" data-filter="training">Training</button>
+      <button class="filter-btn" data-filter="players">Players</button>
+      <button class="filter-btn" data-filter="development">Development</button>
+    </div>
+
+    <div class="news-grid reveal" id="newsGrid">
+
+      <article class="news-card" data-category="training" data-title="First Training Session" data-excerpt="A look at what the very first Learners FC training session is set to focus on: fundamentals, structure and setting the tone.">
+        <div class="news-photo"><img src="../images/news/news-01.jpg" alt="First Training Session" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Training</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">First Training Session</h3>
+          <p class="news-excerpt">A look at what the club's earliest sessions are built around — fundamentals, structure and setting the tone for everything that follows.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="players" data-title="Meet The Learners" data-excerpt="An introduction to the idea behind the squad, and what it means to be a Learner on and off the pitch.">
+        <div class="news-photo"><img src="../images/news/news-02.jpg" alt="Meet The Learners" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Players</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Meet The Learners</h3>
+          <p class="news-excerpt">An introduction to the people behind the squad, and what it means to wear the Learners FC badge.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="club" data-title="Coach's Philosophy" data-excerpt="A first look at the thinking behind Learn, Relearn, Unlearn — and how it shapes daily life at the club.">
+        <div class="news-photo"><img src="../images/news/news-03.jpg" alt="Coach's Philosophy" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Club</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Coach's Philosophy</h3>
+          <p class="news-excerpt">A first look at the thinking behind Learn, Relearn, Unlearn, and how it shapes daily life at the club.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="development" data-title="Preparing For Competition" data-excerpt="How Learners FC approaches getting a young squad ready for its first taste of competitive football.">
+        <div class="news-photo"><img src="../images/news/news-04.jpg" alt="Preparing For Competition" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Development</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Preparing For Competition</h3>
+          <p class="news-excerpt">How Learners FC approaches getting a young squad ready for its first taste of competitive football.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="players" data-title="Player Development" data-excerpt="Why every player at Learners FC is treated as a work in progress — and why that's the point.">
+        <div class="news-photo"><img src="../images/news/news-05.jpg" alt="Player Development" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Players</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Player Development</h3>
+          <p class="news-excerpt">Why every player at Learners FC is treated as a work in progress, and why that's exactly the point.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="matches" data-title="Match Report" data-excerpt="Full match reports will appear here once Learners FC's competitive fixtures begin.">
+        <div class="news-photo"><img src="../images/news/news-06.jpg" alt="Match Report" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Matches</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Match Report</h3>
+          <p class="news-excerpt">Full match reports will appear here as soon as Learners FC's competitive fixtures begin.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="club" data-title="Building The Club" data-excerpt="A behind-the-scenes look at what it takes to build a football club from the ground up.">
+        <div class="news-photo"><img src="../images/news/news-07.jpg" alt="Building The Club" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Club</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Building The Club</h3>
+          <p class="news-excerpt">A behind-the-scenes look at what it takes to build a football club from the ground up.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="training" data-title="Inside A Training Week" data-excerpt="A general look at how a training week is structured around the Learn, Relearn, Unlearn philosophy.">
+        <div class="news-photo"><img src="../images/news/news-08.jpg" alt="Inside A Training Week" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Training</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Inside A Training Week</h3>
+          <p class="news-excerpt">A general look at how a training week is structured around the Learn, Relearn, Unlearn philosophy.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="development" data-title="Humility In Football" data-excerpt="Why staying coachable matters as much as raw talent in the Learners FC approach to development.">
+        <div class="news-photo"><img src="../images/news/news-09.jpg" alt="Humility In Football" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Development</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Humility In Football</h3>
+          <p class="news-excerpt">Why staying coachable matters as much as raw talent in the Learners FC approach to development.</p>
+          <a href="#" class="news-link">Read More →</a>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="empty-state" id="newsEmptyState">
+      <h3 class="empty-state-title">No Stories Found</h3>
+      <p class="empty-state-text">Try a different search term or category — or check back soon as new stories are added.</p>
+    </div>
+
+    <div class="load-more-wrap">
+      <button class="btn btn-outline-dark" id="loadMoreBtn">Load More</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FROM THE PITCH — MATCH REPORT
+============================================ -->
+<section class="section" id="match-report">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Matchday Coverage</span>
+      <h2 class="section-title">From The Pitch</h2>
+    </div>
+
+    <!-- Learners FC has not yet played a competitive match, so this
+         section shows the required empty state. Once a match report is
+         ready, replace this block with a populated .match-report-card
+         (opponent, date, score and headline placeholders included below
+         for reference when building that card). -->
+    <div class="empty-state is-visible reveal">
+      <h3 class="empty-state-title">Match Reports Will Appear Here</h3>
+      <p class="empty-state-text">Follow Learners FC as the competitive journey begins.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     THE LEARNING JOURNEY — DEVELOPMENT STORIES
+============================================ -->
+<section class="section section-dark" id="development-stories">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="color:var(--color-accent)">Philosophy In Practice</span>
+      <h2 class="section-title">The Learning Journey</h2>
+      <p class="section-sub">Editorial topics that explore how Learners FC approaches development — not one-off events, but ongoing themes the club lives by.</p>
+    </div>
+
+    <div class="dev-grid">
+      <div class="dev-card reveal">
+        <h3 class="dev-card-title">Learning The Fundamentals</h3>
+        <p class="dev-card-text">Why mastering the basics comes before anything else.</p>
+      </div>
+      <div class="dev-card reveal">
+        <h3 class="dev-card-title">The Importance Of Consistency</h3>
+        <p class="dev-card-text">How small habits, repeated daily, build real progress.</p>
+      </div>
+      <div class="dev-card reveal">
+        <h3 class="dev-card-title">Building Confidence</h3>
+        <p class="dev-card-text">Turning discipline and preparation into self-belief.</p>
+      </div>
+      <div class="dev-card reveal">
+        <h3 class="dev-card-title">Learning From Mistakes</h3>
+        <p class="dev-card-text">Treating setbacks as part of the process, not the end of it.</p>
+      </div>
+      <div class="dev-card reveal">
+        <h3 class="dev-card-title">Humility In Football</h3>
+        <p class="dev-card-text">Staying coachable no matter how far a player has come.</p>
+      </div>
+      <div class="dev-card reveal">
+        <h3 class="dev-card-title">Preparing Players For Life</h3>
+        <p class="dev-card-text">Why the lessons learned here are meant to last beyond football.</p>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:44px;">
+      <a href="development.html" class="btn btn-outline">Explore Development</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     CLUB PHILOSOPHY CTA
+============================================ -->
+<section class="section section-alt" id="cta">
+  <div class="container">
+    <div class="cta reveal">
+      <div class="cta-inner">
+        <h2 class="cta-title">Every Story Is Part Of The Journey.</h2>
+        <p class="cta-text">We learn from every session, every challenge and every match.</p>
+        <div class="cta-actions">
+          <a href="about.html" class="btn btn-primary">Our Philosophy</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTER
+============================================ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="brand">
+          <span class="brand-mark">LFC</span>
+          <span class="brand-name">Learners FC</span>
+        </a>
+        <p class="footer-statement">Preparing the next generation to be ready for anything — on the pitch and in life.</p>
+        <p class="footer-philosophy">Learn. Relearn. Unlearn.</p>
+        <div class="social-row" aria-label="Social media links">
+          <a href="#" class="social-icon" aria-label="Facebook">f</a>
+          <a href="#" class="social-icon" aria-label="Instagram">ig</a>
+          <a href="#" class="social-icon" aria-label="X / Twitter">x</a>
+          <a href="#" class="social-icon" aria-label="YouTube">yt</a>
+        </div>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="team.html">Team</a></li>
+          <li><a href="fixtures.html">Fixtures</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">More</h3>
+        <ul class="footer-links">
+          <li><a href="news.html">News</a></li>
+          <li><a href="media.html">Media</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact-wrap">
+        <h3 class="footer-heading">Contact</h3>
+        <ul class="footer-contact">
+          <li>Address — Placeholder</li>
+          <li>Phone — Placeholder</li>
+          <li>Email — Placeholder</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Learners FC. All rights reserved.</span>
+      <span>Learn. Relearn. Unlearn.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    "use strict";
+
+    /* 1. Mobile navigation toggle */
+    var navToggle = document.getElementById('navToggle');
+    var navLinks  = document.getElementById('navLinks');
+
+    navToggle.addEventListener('click', function(){
+      var isOpen = navLinks.classList.toggle('is-open');
+      navToggle.classList.toggle('is-open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    navLinks.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click', function(){
+        navLinks.classList.remove('is-open');
+        navToggle.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* 2. Dynamic copyright year */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* 3. Smooth scroll for in-page anchors */
+    document.querySelectorAll('a[href^="#"]').forEach(function(link){
+      link.addEventListener('click', function(e){
+        var targetId = link.getAttribute('href');
+        if(targetId.length > 1 && document.querySelector(targetId)){
+          e.preventDefault();
+          document.querySelector(targetId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    /* 4. Scroll-reveal animations */
+    var revealEls = document.querySelectorAll('.reveal');
+    if('IntersectionObserver' in window){
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
+
+      revealEls.forEach(function(el){ observer.observe(el); });
+    } else {
+      revealEls.forEach(function(el){ el.classList.add('is-visible'); });
+    }
+
+    /* 5. Header background strengthens on scroll */
+    var header = document.querySelector('.site-header');
+    var onScroll = function(){
+      header.style.background = window.scrollY > 40 ? 'rgba(8,28,20,0.97)' : 'rgba(14,42,31,0.92)';
+    };
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+
+    /* 6. News: combined category filter + search + load more */
+    var filterButtons  = document.querySelectorAll('#news-grid-section .filter-btn');
+    var searchInput    = document.getElementById('newsSearch');
+    var newsCards       = Array.prototype.slice.call(document.querySelectorAll('#newsGrid .news-card'));
+    var newsEmptyState  = document.getElementById('newsEmptyState');
+    var loadMoreBtn      = document.getElementById('loadMoreBtn');
+
+    var activeFilter = 'all';
+    var searchTerm    = '';
+    var pageSize       = 6;
+    var visibleLimit   = pageSize;
+
+    function cardMatches(card){
+      var category = card.getAttribute('data-category');
+      var matchesFilter = activeFilter === 'all' || activeFilter === category;
+      if(!matchesFilter) return false;
+
+      if(searchTerm === '') return true;
+
+      var haystack = (
+        card.getAttribute('data-title') + ' ' +
+        card.getAttribute('data-category') + ' ' +
+        card.getAttribute('data-excerpt')
+      ).toLowerCase();
+
+      return haystack.indexOf(searchTerm) !== -1;
+    }
+
+    function render(){
+      var eligible = newsCards.filter(cardMatches);
+      var shown = 0;
+
+      newsCards.forEach(function(card){
+        var isEligible = cardMatches(card);
+        var withinLimit = isEligible && eligible.indexOf(card) < visibleLimit;
+        card.style.display = withinLimit ? '' : 'none';
+        if(withinLimit) shown++;
+      });
+
+      newsEmptyState.classList.toggle('is-visible', eligible.length === 0);
+      loadMoreBtn.style.display = (eligible.length > visibleLimit) ? '' : 'none';
+    }
+
+    filterButtons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        filterButtons.forEach(function(b){ b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        activeFilter = btn.getAttribute('data-filter');
+        visibleLimit = pageSize;
+        render();
+      });
+    });
+
+    searchInput.addEventListener('input', function(){
+      searchTerm = searchInput.value.trim().toLowerCase();
+      visibleLimit = pageSize;
+      render();
+    });
+
+    loadMoreBtn.addEventListener('click', function(){
+      visibleLimit += pageSize;
+      render();
+    });
+
+    render();
+
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learners FC — Learn. Relearn. Unlearn.</title>
+<meta name="description" content="Learners FC is a football development club preparing the next generation to be ready for anything — on the pitch and in life.">
+
+<style>
+  /* ============================================
+     0. DESIGN TOKENS
+     Change these to re-brand the whole site.
+  ============================================ */
+  :root{
+    --color-primary:       #0E2A1F;   /* deep pitch green-black */
+    --color-primary-light: #1D4834;   /* lighter pitch green */
+    --color-primary-dark:  #081C14;   /* near-black green, for overlays */
+    --color-bg:            #FFFFFF;
+    --color-bg-alt:        #F4F5F1;   /* chalk grey-white */
+    --color-accent:        #E3A130;   /* whistle-gold */
+    --color-accent-dark:   #C6852078; /* not used directly, kept for reference */
+    --color-text:          #12201A;
+    --color-text-muted:    #5C6A62;
+    --color-line:          #E1E4DD;
+    --color-white:         #FFFFFF;
+
+    --font-display: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --container: 1180px;
+    --radius: 6px;
+    --transition: 220ms ease;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    color:var(--color-text);
+    background:var(--color-bg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  ul{ list-style:none; margin:0; padding:0; }
+  h1,h2,h3,h4{ margin:0; font-family:var(--font-display); letter-spacing:0.01em; }
+  p{ margin:0; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  .container{
+    max-width:var(--container);
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-size:0.78rem;
+    font-weight:700;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--color-accent);
+  }
+  .eyebrow::before{
+    content:"";
+    width:28px; height:2px;
+    background:var(--color-accent);
+    display:inline-block;
+  }
+
+  .section{ padding:96px 0; }
+  .section-alt{ background:var(--color-bg-alt); }
+  .section-dark{ background:var(--color-primary); color:var(--color-white); }
+  .section-head{
+    max-width:640px;
+    margin-bottom:56px;
+  }
+  .section-title{
+    font-size:clamp(1.9rem, 3.4vw, 2.7rem);
+    line-height:1.08;
+    margin-top:12px;
+    text-transform:uppercase;
+  }
+  .section-sub{
+    margin-top:16px;
+    color:var(--color-text-muted);
+    font-size:1.02rem;
+    max-width:56ch;
+  }
+  .section-dark .section-sub{ color:#C7D3CC; }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:15px 30px;
+    border-radius:var(--radius);
+    font-weight:700;
+    font-size:0.82rem;
+    letter-spacing:0.09em;
+    text-transform:uppercase;
+    border:2px solid transparent;
+    transition:transform var(--transition), background var(--transition), color var(--transition), border-color var(--transition);
+    white-space:nowrap;
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn-primary{ background:var(--color-accent); color:var(--color-primary-dark); }
+  .btn-primary:hover{ background:#f0b04f; }
+  .btn-outline{ background:transparent; border-color:currentColor; color:inherit; }
+  .btn-outline:hover{ background:rgba(255,255,255,0.12); }
+  .btn-outline-dark{ background:transparent; border-color:var(--color-primary); color:var(--color-primary); }
+  .btn-outline-dark:hover{ background:var(--color-primary); color:var(--color-white); }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(26px);
+    transition:opacity 700ms ease, transform 700ms ease;
+  }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+
+  /* ============================================
+     1. HEADER / NAV
+  ============================================ */
+  .site-header{
+    position:fixed; top:0; left:0; right:0;
+    z-index:1000;
+    background:rgba(14,42,31,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    transition:background var(--transition);
+  }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:76px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:var(--color-white);
+  }
+  .brand-mark{
+    width:42px; height:42px;
+    border-radius:50%;
+    border:2px solid var(--color-accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display);
+    font-size:0.95rem;
+    color:var(--color-accent);
+    flex-shrink:0;
+  }
+  .brand-name{
+    font-family:var(--font-display);
+    font-size:1.05rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    line-height:1.1;
+  }
+  .brand-name span{
+    display:block;
+    font-family:var(--font-body);
+    font-weight:400;
+    font-size:0.62rem;
+    letter-spacing:0.22em;
+    color:var(--color-accent);
+    margin-top:2px;
+  }
+
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:2px;
+  }
+  .nav-links a{
+    color:#D8DED9;
+    font-size:0.82rem;
+    font-weight:600;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    padding:10px 16px;
+    border-radius:var(--radius);
+    transition:color var(--transition), background var(--transition);
+  }
+  .nav-links a:hover{ color:var(--color-white); background:rgba(255,255,255,0.06); }
+  .nav-links a.active{ color:var(--color-accent); }
+  .nav-links a.active::after{ content:""; }
+
+  .nav-toggle{
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    gap:5px;
+    width:40px; height:40px;
+    background:transparent;
+    border:none;
+    padding:0;
+  }
+  .nav-toggle span{
+    width:100%; height:2px;
+    background:var(--color-white);
+    transition:transform var(--transition), opacity var(--transition);
+  }
+  .nav-toggle.is-open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2){ opacity:0; }
+  .nav-toggle.is-open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  /* ============================================
+     2. HERO
+  ============================================ */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    color:var(--color-white);
+    overflow:hidden;
+    background-color:var(--color-primary-dark);
+  }
+  .hero-media{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(180deg, rgba(8,28,20,0.55) 0%, rgba(8,28,20,0.78) 55%, rgba(8,28,20,0.96) 100%),
+      url('images/club/hero.jpg');
+    background-size:cover;
+    background-position:center;
+  }
+  .hero-media::after{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 90px);
+    pointer-events:none;
+  }
+  .hero-content{
+    position:relative;
+    z-index:2;
+    max-width:760px;
+    padding-top:76px;
+  }
+  .hero-eyebrow{
+    display:inline-block;
+    font-size:0.8rem;
+    font-weight:700;
+    letter-spacing:0.24em;
+    text-transform:uppercase;
+    color:var(--color-accent);
+    margin-bottom:22px;
+  }
+  .hero-title{
+    font-size:clamp(2.6rem, 7vw, 5.2rem);
+    line-height:0.98;
+    text-transform:uppercase;
+  }
+  .hero-title em{
+    font-style:normal;
+    color:var(--color-accent);
+  }
+  .hero-lead{
+    margin-top:26px;
+    font-size:clamp(1.05rem, 1.6vw, 1.3rem);
+    max-width:52ch;
+    color:#E4E9E4;
+  }
+  .hero-note{
+    margin-top:16px;
+    max-width:56ch;
+    color:#B9C4BC;
+    font-size:0.98rem;
+  }
+  .hero-actions{
+    margin-top:38px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+
+  /* ============================================
+     3. PHILOSOPHY
+  ============================================ */
+  .philosophy-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:24px;
+  }
+  .philo-card{
+    position:relative;
+    background:var(--color-white);
+    border:1px solid var(--color-line);
+    border-radius:var(--radius);
+    padding:36px 30px 32px;
+    transition:transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    overflow:hidden;
+  }
+  .philo-card::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0;
+    width:4px;
+    background:var(--color-accent);
+    transform:scaleY(0);
+    transform-origin:bottom;
+    transition:transform 320ms ease;
+  }
+  .philo-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 18px 34px rgba(14,42,31,0.12);
+    border-color:transparent;
+  }
+  .philo-card:hover::before{ transform:scaleY(1); }
+  .philo-index{
+    font-family:var(--font-display);
+    font-size:2.6rem;
+    color:var(--color-line);
+    line-height:1;
+  }
+  .philo-title{
+    margin-top:18px;
+    font-size:1.3rem;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+  }
+  .philo-text{
+    margin-top:12px;
+    color:var(--color-text-muted);
+    font-size:0.98rem;
+  }
+
+  /* ============================================
+     4. BUILD PLAYERS JOURNEY
+  ============================================ */
+  .journey{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:0;
+    margin-top:64px;
+    position:relative;
+  }
+  .journey::before{
+    content:"";
+    position:absolute;
+    top:19px; left:0; right:0;
+    height:2px;
+    background:rgba(255,255,255,0.16);
+  }
+  .journey-step{
+    position:relative;
+    padding:0 16px;
+    text-align:left;
+  }
+  .journey-num{
+    width:40px; height:40px;
+    border-radius:50%;
+    background:var(--color-primary);
+    border:2px solid var(--color-accent);
+    color:var(--color-accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display);
+    font-size:0.95rem;
+    margin-bottom:20px;
+    position:relative;
+    z-index:1;
+  }
+  .journey-title{
+    font-size:1.02rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--color-white);
+  }
+  .journey-text{
+    margin-top:10px;
+    font-size:0.9rem;
+    color:#B9C4BC;
+  }
+
+  /* ============================================
+     5. TEAM PREVIEW
+  ============================================ */
+  .team-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:22px;
+  }
+  .player-card{
+    background:var(--color-white);
+    border:1px solid var(--color-line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    transition:transform var(--transition), box-shadow var(--transition);
+  }
+  .player-card:hover{ transform:translateY(-6px); box-shadow:0 18px 32px rgba(14,42,31,0.1); }
+  .player-photo{
+    aspect-ratio:3/4;
+    background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary));
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    color:rgba(255,255,255,0.5);
+    font-family:var(--font-display);
+  }
+  .player-photo img{ width:100%; height:100%; object-fit:cover; }
+  .player-photo .fallback-num{ font-size:2.6rem; }
+  .player-num-badge{
+    position:absolute; top:12px; left:12px;
+    background:var(--color-accent);
+    color:var(--color-primary-dark);
+    font-family:var(--font-display);
+    font-size:0.85rem;
+    width:32px; height:32px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .player-info{ padding:16px 18px 20px; }
+  .player-name{ font-size:1.02rem; text-transform:uppercase; letter-spacing:0.02em; }
+  .player-pos{ margin-top:4px; font-size:0.83rem; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.06em; }
+
+  /* ============================================
+     6. FIXTURES
+  ============================================ */
+  .fixtures-panel{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:24px;
+  }
+  .fixture-card{
+    background:var(--color-primary);
+    color:var(--color-white);
+    border-radius:var(--radius);
+    padding:40px;
+    position:relative;
+    overflow:hidden;
+  }
+  .fixture-card::after{
+    content:"";
+    position:absolute; right:-40px; top:-40px;
+    width:200px; height:200px;
+    border:2px dashed rgba(227,161,48,0.25);
+    border-radius:50%;
+  }
+  .fixture-tag{
+    font-size:0.75rem; font-weight:700; letter-spacing:0.16em;
+    text-transform:uppercase; color:var(--color-accent);
+  }
+  .fixture-teams{
+    margin-top:22px;
+    display:flex; align-items:center; gap:20px;
+    font-family:var(--font-display);
+    font-size:clamp(1.4rem,3vw,2rem);
+    text-transform:uppercase;
+  }
+  .fixture-vs{
+    font-size:1rem;
+    color:var(--color-accent);
+    font-family:var(--font-body);
+    font-weight:700;
+  }
+  .fixture-meta{
+    margin-top:26px;
+    display:flex; flex-wrap:wrap; gap:28px;
+    font-size:0.88rem;
+    color:#C7D3CC;
+  }
+  .fixture-meta strong{ display:block; color:var(--color-white); font-size:0.95rem; margin-top:4px; }
+  .fixture-meta-placeholder{
+    font-style:italic;
+    color:#9AA79F;
+  }
+
+  .result-card{
+    background:var(--color-bg-alt);
+    border:1px solid var(--color-line);
+    border-radius:var(--radius);
+    padding:30px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  .result-tag{
+    font-size:0.75rem; font-weight:700; letter-spacing:0.16em;
+    text-transform:uppercase; color:var(--color-text-muted);
+  }
+  .result-score{
+    margin-top:16px;
+    font-family:var(--font-display);
+    font-size:1.5rem;
+    text-transform:uppercase;
+  }
+  .result-note{
+    margin-top:12px;
+    font-size:0.88rem;
+    color:var(--color-text-muted);
+    font-style:italic;
+  }
+
+  /* ============================================
+     7. NEWS
+  ============================================ */
+  .news-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:24px;
+  }
+  .news-card{
+    background:var(--color-white);
+    border:1px solid var(--color-line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    transition:transform var(--transition), box-shadow var(--transition);
+  }
+  .news-card:hover{ transform:translateY(-6px); box-shadow:0 18px 32px rgba(14,42,31,0.1); }
+  .news-photo{
+    aspect-ratio:16/10;
+    background:linear-gradient(155deg, #dfe4dc, #c9d1c5);
+    display:flex; align-items:center; justify-content:center;
+    color:#8a948a;
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+  }
+  .news-photo img{ width:100%; height:100%; object-fit:cover; }
+  .news-body{ padding:22px 22px 26px; }
+  .news-meta{
+    display:flex; gap:12px; align-items:center;
+    font-size:0.75rem; font-weight:700; letter-spacing:0.06em;
+    text-transform:uppercase; color:var(--color-accent);
+  }
+  .news-meta .dot{ width:4px; height:4px; border-radius:50%; background:var(--color-text-muted); }
+  .news-meta .date{ color:var(--color-text-muted); font-weight:600; }
+  .news-title{
+    margin-top:12px;
+    font-size:1.12rem;
+    line-height:1.28;
+    text-transform:uppercase;
+  }
+  .news-excerpt{
+    margin-top:10px;
+    font-size:0.92rem;
+    color:var(--color-text-muted);
+  }
+  .news-link{
+    margin-top:16px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:0.8rem;
+    font-weight:700;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--color-primary);
+    border-bottom:2px solid var(--color-accent);
+    padding-bottom:2px;
+  }
+
+  /* ============================================
+     8. MEDIA GALLERY
+  ============================================ */
+  .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    grid-auto-rows:180px;
+    gap:14px;
+  }
+  .gallery-grid a:nth-child(1){ grid-column:span 2; grid-row:span 2; }
+  .gallery-item{
+    position:relative;
+    border-radius:var(--radius);
+    overflow:hidden;
+    background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary));
+  }
+  .gallery-item img{
+    width:100%; height:100%; object-fit:cover;
+    transition:transform 450ms ease;
+  }
+  .gallery-item:hover img{ transform:scale(1.08); }
+  .gallery-overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(0deg, rgba(8,28,20,0.85) 0%, rgba(8,28,20,0) 55%);
+    display:flex; align-items:flex-end;
+    padding:14px;
+    opacity:0;
+    transition:opacity var(--transition);
+  }
+  .gallery-item:hover .gallery-overlay{ opacity:1; }
+  .gallery-overlay span{
+    color:var(--color-white);
+    font-size:0.78rem;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+  }
+
+  /* ============================================
+     9. CTA
+  ============================================ */
+  .cta{
+    background:var(--color-primary);
+    color:var(--color-white);
+    border-radius:var(--radius);
+    padding:72px 56px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .cta::before{
+    content:"";
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(227,161,48,0.05) 0 2px, transparent 2px 60px);
+  }
+  .cta-inner{ position:relative; z-index:1; max-width:640px; margin:0 auto; }
+  .cta-title{
+    font-size:clamp(2rem, 4vw, 3rem);
+    text-transform:uppercase;
+  }
+  .cta-text{
+    margin-top:16px;
+    color:#C7D3CC;
+    font-size:1.02rem;
+  }
+  .cta-actions{
+    margin-top:34px;
+    display:flex; flex-wrap:wrap; justify-content:center; gap:16px;
+  }
+
+  /* ============================================
+     10. FOOTER
+  ============================================ */
+  .site-footer{
+    background:var(--color-primary-dark);
+    color:#B9C4BC;
+    padding:64px 0 28px;
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns:1.6fr 1fr 1fr 1fr;
+    gap:40px;
+  }
+  .footer-brand .brand{ color:var(--color-white); margin-bottom:16px; }
+  .footer-statement{
+    font-size:0.92rem;
+    max-width:34ch;
+    color:#9AA79F;
+  }
+  .footer-philosophy{
+    margin-top:18px;
+    font-family:var(--font-display);
+    font-size:0.85rem;
+    letter-spacing:0.1em;
+    color:var(--color-accent);
+    text-transform:uppercase;
+  }
+  .footer-heading{
+    font-size:0.78rem;
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--color-white);
+    margin-bottom:18px;
+  }
+  .footer-links li{ margin-bottom:11px; }
+  .footer-links a{ font-size:0.9rem; color:#B9C4BC; transition:color var(--transition); }
+  .footer-links a:hover{ color:var(--color-accent); }
+  .footer-contact li{ margin-bottom:11px; font-size:0.9rem; }
+  .social-row{ display:flex; gap:10px; margin-top:18px; }
+  .social-icon{
+    width:36px; height:36px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.78rem;
+    transition:border-color var(--transition), color var(--transition);
+  }
+  .social-icon:hover{ border-color:var(--color-accent); color:var(--color-accent); }
+  .footer-bottom{
+    margin-top:56px;
+    padding-top:24px;
+    border-top:1px solid rgba(255,255,255,0.1);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    font-size:0.82rem;
+    color:#7E8B83;
+  }
+
+  /* ============================================
+     RESPONSIVE
+  ============================================ */
+  @media (max-width:1024px){
+    .philosophy-grid{ grid-template-columns:1fr; }
+    .team-grid{ grid-template-columns:repeat(2, 1fr); }
+    .news-grid{ grid-template-columns:1fr; }
+    .fixtures-panel{ grid-template-columns:1fr; }
+    .footer-grid{ grid-template-columns:1fr 1fr; row-gap:36px; }
+    .journey{ grid-template-columns:repeat(3,1fr); row-gap:36px; }
+    .journey::before{ display:none; }
+    .gallery-grid{ grid-template-columns:repeat(3,1fr); }
+    .gallery-grid a:nth-child(1){ grid-column:span 2; grid-row:span 1; }
+  }
+
+  @media (max-width:760px){
+    .section{ padding:68px 0; }
+    .nav-links{
+      position:fixed;
+      top:76px; left:0; right:0;
+      flex-direction:column;
+      align-items:stretch;
+      background:var(--color-primary-dark);
+      padding:10px 24px 26px;
+      gap:0;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      transform:translateY(-8px);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity var(--transition), transform var(--transition);
+    }
+    .nav-links.is-open{
+      transform:translateY(0);
+      opacity:1;
+      pointer-events:auto;
+    }
+    .nav-links a{ padding:14px 4px; border-bottom:1px solid rgba(255,255,255,0.06); border-radius:0; }
+    .nav-toggle{ display:flex; }
+    .team-grid{ grid-template-columns:1fr 1fr; }
+    .journey{ grid-template-columns:1fr 1fr; }
+    .gallery-grid{ grid-template-columns:1fr 1fr; }
+    .gallery-grid a:nth-child(1){ grid-column:span 2; }
+    .footer-grid{ grid-template-columns:1fr; }
+    .cta{ padding:52px 26px; }
+    .hero-actions .btn{ width:100%; }
+  }
+
+  @media (max-width:480px){
+    .team-grid{ grid-template-columns:1fr 1fr; gap:14px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HEADER / NAVIGATION
+============================================ -->
+<header class="site-header">
+  <div class="container nav">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">LFC</span>
+      <span class="brand-name">Learners FC<span>Learn · Relearn · Unlearn</span></span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active" aria-current="page">Home</a></li>
+        <li><a href="pages/about.html">About</a></li>
+        <li><a href="pages/team.html">Team</a></li>
+        <li><a href="pages/fixtures.html">Fixtures</a></li>
+        <li><a href="pages/news.html">News</a></li>
+        <li><a href="pages/media.html">Media</a></li>
+        <li><a href="pages/development.html">Development</a></li>
+        <li><a href="pages/contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============================================
+     HERO
+============================================ -->
+<section class="hero">
+  <div class="hero-media" role="img" aria-label="Learners FC players training on the pitch"></div>
+  <div class="container hero-content">
+    <span class="hero-eyebrow">Learners FC</span>
+    <h1 class="hero-title">Learn.<br>Relearn.<br><em>Unlearn.</em></h1>
+    <p class="hero-lead">Together, we are preparing the next generation to be ready for anything.</p>
+    <p class="hero-note">Learners FC develops football ability and character side by side — building players who are disciplined, humble, confident and resilient, on the pitch and off it.</p>
+    <div class="hero-actions">
+      <a href="pages/about.html" class="btn btn-primary">Discover Our Philosophy</a>
+      <a href="pages/team.html" class="btn btn-outline">Meet The Team</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     PHILOSOPHY
+============================================ -->
+<section class="section" id="philosophy">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Our Foundation</span>
+      <h2 class="section-title">Our Name Is Our Mission</h2>
+      <p class="section-sub">The three words in Learners FC aren't a slogan — they're the method. Every session, every match and every conversation runs through the same cycle of growth.</p>
+    </div>
+
+    <div class="philosophy-grid">
+      <article class="philo-card reveal">
+        <span class="philo-index">01</span>
+        <h3 class="philo-title">Learn</h3>
+        <p class="philo-text">Learn the fundamentals of football and life.</p>
+      </article>
+      <article class="philo-card reveal">
+        <span class="philo-index">02</span>
+        <h3 class="philo-title">Relearn</h3>
+        <p class="philo-text">Relearn consistency, humility, and hard work.</p>
+      </article>
+      <article class="philo-card reveal">
+        <span class="philo-index">03</span>
+        <h3 class="philo-title">Unlearn</h3>
+        <p class="philo-text">Unlearn fear, excuses, and complacency.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     BUILD PLAYERS JOURNEY
+============================================ -->
+<section class="section section-dark" id="build-players">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="color:var(--color-accent)">Our Process</span>
+      <h2 class="section-title">This Is How We Build Players.</h2>
+      <p class="section-sub">Development at Learners FC goes beyond technical ability. It's a deliberate journey — one stage builds the next.</p>
+    </div>
+
+    <div class="journey">
+      <div class="journey-step reveal">
+        <div class="journey-num">1</div>
+        <h3 class="journey-title">Foundation</h3>
+        <p class="journey-text">Building the basic technical and physical building blocks every player needs.</p>
+      </div>
+      <div class="journey-step reveal">
+        <div class="journey-num">2</div>
+        <h3 class="journey-title">Discipline</h3>
+        <p class="journey-text">Instilling structure, routine and accountability in training and daily habits.</p>
+      </div>
+      <div class="journey-step reveal">
+        <div class="journey-num">3</div>
+        <h3 class="journey-title">Development</h3>
+        <p class="journey-text">Sharpening skill, tactical understanding and football intelligence over time.</p>
+      </div>
+      <div class="journey-step reveal">
+        <div class="journey-num">4</div>
+        <h3 class="journey-title">Competition</h3>
+        <p class="journey-text">Testing growth in real match situations, under real pressure.</p>
+      </div>
+      <div class="journey-step reveal">
+        <div class="journey-num">5</div>
+        <h3 class="journey-title">Character</h3>
+        <p class="journey-text">Carrying discipline, humility and resilience into life beyond the game.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     TEAM PREVIEW
+============================================ -->
+<section class="section" id="team-preview">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Squad</span>
+      <h2 class="section-title">Meet The Learners</h2>
+      <p class="section-sub">The players carrying the Learners FC philosophy onto the pitch. Full squad profiles are coming soon.</p>
+    </div>
+
+    <div class="team-grid">
+      <article class="player-card reveal">
+        <div class="player-photo">
+          <span class="player-num-badge">—</span>
+          <img src="images/players/player-01.jpg" alt="Learners FC player" loading="lazy"
+               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+          <span class="fallback-num" style="display:none;">LFC</span>
+        </div>
+        <div class="player-info">
+          <h3 class="player-name">Player Name</h3>
+          <p class="player-pos">Position — Placeholder</p>
+        </div>
+      </article>
+      <article class="player-card reveal">
+        <div class="player-photo">
+          <span class="player-num-badge">—</span>
+          <img src="images/players/player-02.jpg" alt="Learners FC player" loading="lazy"
+               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+          <span class="fallback-num" style="display:none;">LFC</span>
+        </div>
+        <div class="player-info">
+          <h3 class="player-name">Player Name</h3>
+          <p class="player-pos">Position — Placeholder</p>
+        </div>
+      </article>
+      <article class="player-card reveal">
+        <div class="player-photo">
+          <span class="player-num-badge">—</span>
+          <img src="images/players/player-03.jpg" alt="Learners FC player" loading="lazy"
+               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+          <span class="fallback-num" style="display:none;">LFC</span>
+        </div>
+        <div class="player-info">
+          <h3 class="player-name">Player Name</h3>
+          <p class="player-pos">Position — Placeholder</p>
+        </div>
+      </article>
+      <article class="player-card reveal">
+        <div class="player-photo">
+          <span class="player-num-badge">—</span>
+          <img src="images/players/player-04.jpg" alt="Learners FC player" loading="lazy"
+               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+          <span class="fallback-num" style="display:none;">LFC</span>
+        </div>
+        <div class="player-info">
+          <h3 class="player-name">Player Name</h3>
+          <p class="player-pos">Position — Placeholder</p>
+        </div>
+      </article>
+    </div>
+
+    <div style="text-align:center; margin-top:44px;">
+      <a href="pages/team.html" class="btn btn-outline-dark">View Full Team</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FIXTURES
+============================================ -->
+<section class="section section-alt" id="fixtures">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Matchday</span>
+      <h2 class="section-title">On The Pitch</h2>
+      <p class="section-sub">The next fixture on the calendar, and a look back at the last result.</p>
+    </div>
+
+    <div class="fixtures-panel">
+      <div class="fixture-card reveal">
+        <span class="fixture-tag">Next Fixture</span>
+        <div class="fixture-teams">
+          <span>Learners FC</span>
+          <span class="fixture-vs">VS</span>
+          <span>Opponent TBC</span>
+        </div>
+        <div class="fixture-meta">
+          <div>
+            Date
+            <strong class="fixture-meta-placeholder">To be confirmed</strong>
+          </div>
+          <div>
+            Time
+            <strong class="fixture-meta-placeholder">To be confirmed</strong>
+          </div>
+          <div>
+            Venue
+            <strong class="fixture-meta-placeholder">To be confirmed</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-card reveal">
+        <span class="result-tag">Last Result</span>
+        <p class="result-score">No result recorded yet</p>
+        <p class="result-note">Match results will appear here once fixtures begin.</p>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:44px;">
+      <a href="pages/fixtures.html" class="btn btn-outline-dark">View All Fixtures</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     LATEST NEWS
+============================================ -->
+<section class="section" id="news">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Club News</span>
+      <h2 class="section-title">Latest From Learners FC</h2>
+      <p class="section-sub">Updates, stories and announcements from around the club.</p>
+    </div>
+
+    <div class="news-grid">
+      <article class="news-card reveal">
+        <div class="news-photo">
+          <img src="images/news/news-01.jpg" alt="Learners FC news" loading="lazy"
+               onerror="this.parentElement.textContent='Image Coming Soon';">
+        </div>
+        <div class="news-body">
+          <div class="news-meta"><span>Club News</span><span class="dot"></span><span class="date">Coming soon</span></div>
+          <h3 class="news-title">Headline Placeholder</h3>
+          <p class="news-excerpt">Short article excerpt will appear here once club news has been published.</p>
+          <a href="pages/news.html" class="news-link">Read More →</a>
+        </div>
+      </article>
+      <article class="news-card reveal">
+        <div class="news-photo">
+          <img src="images/news/news-02.jpg" alt="Learners FC news" loading="lazy"
+               onerror="this.parentElement.textContent='Image Coming Soon';">
+        </div>
+        <div class="news-body">
+          <div class="news-meta"><span>Club News</span><span class="dot"></span><span class="date">Coming soon</span></div>
+          <h3 class="news-title">Headline Placeholder</h3>
+          <p class="news-excerpt">Short article excerpt will appear here once club news has been published.</p>
+          <a href="pages/news.html" class="news-link">Read More →</a>
+        </div>
+      </article>
+      <article class="news-card reveal">
+        <div class="news-photo">
+          <img src="images/news/news-03.jpg" alt="Learners FC news" loading="lazy"
+               onerror="this.parentElement.textContent='Image Coming Soon';">
+        </div>
+        <div class="news-body">
+          <div class="news-meta"><span>Club News</span><span class="dot"></span><span class="date">Coming soon</span></div>
+          <h3 class="news-title">Headline Placeholder</h3>
+          <p class="news-excerpt">Short article excerpt will appear here once club news has been published.</p>
+          <a href="pages/news.html" class="news-link">Read More →</a>
+        </div>
+      </article>
+    </div>
+
+    <div style="text-align:center; margin-top:44px;">
+      <a href="pages/news.html" class="btn btn-outline-dark">View All News</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     MEDIA PREVIEW
+============================================ -->
+<section class="section section-alt" id="media">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Gallery</span>
+      <h2 class="section-title">Inside Learners FC</h2>
+      <p class="section-sub">Moments from training, matchdays and life around the club.</p>
+    </div>
+
+    <div class="gallery-grid">
+      <a href="pages/media.html" class="gallery-item reveal">
+        <img src="images/gallery/gallery-01.jpg" alt="Learners FC gallery image" loading="lazy" onerror="this.style.display='none';">
+        <div class="gallery-overlay"><span>Training Ground</span></div>
+      </a>
+      <a href="pages/media.html" class="gallery-item reveal">
+        <img src="images/gallery/gallery-02.jpg" alt="Learners FC gallery image" loading="lazy" onerror="this.style.display='none';">
+        <div class="gallery-overlay"><span>Matchday</span></div>
+      </a>
+      <a href="pages/media.html" class="gallery-item reveal">
+        <img src="images/gallery/gallery-03.jpg" alt="Learners FC gallery image" loading="lazy" onerror="this.style.display='none';">
+        <div class="gallery-overlay"><span>The Squad</span></div>
+      </a>
+      <a href="pages/media.html" class="gallery-item reveal">
+        <img src="images/gallery/gallery-04.jpg" alt="Learners FC gallery image" loading="lazy" onerror="this.style.display='none';">
+        <div class="gallery-overlay"><span>Club Life</span></div>
+      </a>
+      <a href="pages/media.html" class="gallery-item reveal">
+        <img src="images/gallery/gallery-05.jpg" alt="Learners FC gallery image" loading="lazy" onerror="this.style.display='none';">
+        <div class="gallery-overlay"><span>On The Pitch</span></div>
+      </a>
+    </div>
+
+    <div style="text-align:center; margin-top:44px;">
+      <a href="pages/media.html" class="btn btn-outline-dark">View Media</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     CALL TO ACTION
+============================================ -->
+<section class="section" id="cta">
+  <div class="container">
+    <div class="cta reveal">
+      <div class="cta-inner">
+        <h2 class="cta-title">Ready To Learn?</h2>
+        <p class="cta-text">Whether you're a player, a parent, a supporter or a partner — there's a place for you at Learners FC. Reach out and be part of what we're building.</p>
+        <div class="cta-actions">
+          <a href="pages/contact.html" class="btn btn-primary">Contact Us</a>
+          <a href="pages/development.html" class="btn btn-outline">Discover Our Development Philosophy</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTER
+============================================ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="brand">
+          <span class="brand-mark">LFC</span>
+          <span class="brand-name">Learners FC</span>
+        </a>
+        <p class="footer-statement">Preparing the next generation to be ready for anything — on the pitch and in life.</p>
+        <p class="footer-philosophy">Learn. Relearn. Unlearn.</p>
+        <div class="social-row" aria-label="Social media links">
+          <a href="#" class="social-icon" aria-label="Facebook">f</a>
+          <a href="#" class="social-icon" aria-label="Instagram">ig</a>
+          <a href="#" class="social-icon" aria-label="X / Twitter">x</a>
+          <a href="#" class="social-icon" aria-label="YouTube">yt</a>
+        </div>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="pages/about.html">About</a></li>
+          <li><a href="pages/team.html">Team</a></li>
+          <li><a href="pages/fixtures.html">Fixtures</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">More</h3>
+        <ul class="footer-links">
+          <li><a href="pages/news.html">News</a></li>
+          <li><a href="pages/media.html">Media</a></li>
+          <li><a href="pages/development.html">Development</a></li>
+          <li><a href="pages/contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact-wrap">
+        <h3 class="footer-heading">Contact</h3>
+        <ul class="footer-contact">
+          <li>Address — Placeholder</li>
+          <li>Phone — Placeholder</li>
+          <li>Email — Placeholder</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Learners FC. All rights reserved.</span>
+      <span>Learn. Relearn. Unlearn.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    "use strict";
+
+    /* 1. Mobile navigation toggle */
+    var navToggle = document.getElementById('navToggle');
+    var navLinks  = document.getElementById('navLinks');
+
+    navToggle.addEventListener('click', function(){
+      var isOpen = navLinks.classList.toggle('is-open');
+      navToggle.classList.toggle('is-open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    navLinks.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click', function(){
+        navLinks.classList.remove('is-open');
+        navToggle.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* 2. Dynamic copyright year */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* 3. Smooth scroll for in-page anchors (native CSS handles most,
+          this covers older browsers / focus management) */
+    document.querySelectorAll('a[href^="#"]').forEach(function(link){
+      link.addEventListener('click', function(e){
+        var targetId = link.getAttribute('href');
+        if(targetId.length > 1){
+          var target = document.querySelector(targetId);
+          if(target){
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+
+    /* 4. Scroll-reveal animations */
+    var revealEls = document.querySelectorAll('.reveal');
+    if('IntersectionObserver' in window){
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
+
+      revealEls.forEach(function(el){ observer.observe(el); });
+    } else {
+      revealEls.forEach(function(el){ el.classList.add('is-visible'); });
+    }
+
+    /* 5. Header background strengthens on scroll */
+    var header = document.querySelector('.site-header');
+    var onScroll = function(){
+      if(window.scrollY > 40){
+        header.style.background = 'rgba(8,28,20,0.97)';
+      } else {
+        header.style.background = 'rgba(14,42,31,0.92)';
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+
+  })();
+</script>
+
+</body>
+</html>

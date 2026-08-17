@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media — Learners FC</title>
+<meta name="description" content="Photos, videos and moments from Learners FC — the journey of a football development club being built from scratch.">
+
+<style>
+  /* ============================================
+     0. DESIGN TOKENS — identical across the site
+  ============================================ */
+  :root{
+    --color-primary:       #0E2A1F;
+    --color-primary-light: #1D4834;
+    --color-primary-dark:  #081C14;
+    --color-bg:            #FFFFFF;
+    --color-bg-alt:        #F4F5F1;
+    --color-accent:        #E3A130;
+    --color-text:          #12201A;
+    --color-text-muted:    #5C6A62;
+    --color-line:          #E1E4DD;
+    --color-white:         #FFFFFF;
+
+    --font-display: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --container: 1180px;
+    --radius: 6px;
+    --transition: 220ms ease;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; font-family:var(--font-body); color:var(--color-text);
+    background:var(--color-bg); line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  ul{ list-style:none; margin:0; padding:0; }
+  h1,h2,h3,h4{ margin:0; font-family:var(--font-display); letter-spacing:0.01em; }
+  p{ margin:0; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  .container{ max-width:var(--container); margin:0 auto; padding:0 24px; }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:0.78rem; font-weight:700; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--color-accent);
+  }
+  .eyebrow::before{ content:""; width:28px; height:2px; background:var(--color-accent); display:inline-block; }
+
+  .section{ padding:96px 0; }
+  .section-alt{ background:var(--color-bg-alt); }
+  .section-dark{ background:var(--color-primary); color:var(--color-white); }
+  .section-head{ max-width:680px; margin-bottom:48px; }
+  .section-head.center{ margin-left:auto; margin-right:auto; text-align:center; }
+  .section-head.center .section-sub{ margin-left:auto; margin-right:auto; }
+  .section-title{ font-size:clamp(1.9rem, 3.4vw, 2.7rem); line-height:1.08; margin-top:12px; text-transform:uppercase; }
+  .section-sub{ margin-top:16px; color:var(--color-text-muted); font-size:1.02rem; max-width:56ch; }
+  .section-dark .section-sub{ color:#C7D3CC; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    padding:15px 30px; border-radius:var(--radius); font-weight:700;
+    font-size:0.82rem; letter-spacing:0.09em; text-transform:uppercase;
+    border:2px solid transparent;
+    transition:transform var(--transition), background var(--transition), color var(--transition), border-color var(--transition);
+    white-space:nowrap;
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn-primary{ background:var(--color-accent); color:var(--color-primary-dark); }
+  .btn-primary:hover{ background:#f0b04f; }
+  .btn-outline{ background:transparent; border-color:currentColor; color:inherit; }
+  .btn-outline:hover{ background:rgba(255,255,255,0.12); }
+  .btn-outline-dark{ background:transparent; border-color:var(--color-primary); color:var(--color-primary); }
+  .btn-outline-dark:hover{ background:var(--color-primary); color:var(--color-white); }
+
+  .reveal{ opacity:0; transform:translateY(26px); transition:opacity 700ms ease, transform 700ms ease; }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+
+  /* ============================================
+     HEADER / NAV
+  ============================================ */
+  .site-header{
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    background:rgba(14,42,31,0.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    transition:background var(--transition);
+  }
+  .nav{ display:flex; align-items:center; justify-content:space-between; height:76px; }
+  .brand{ display:flex; align-items:center; gap:12px; color:var(--color-white); }
+  .brand-mark{
+    width:42px; height:42px; border-radius:50%; border:2px solid var(--color-accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:0.95rem; color:var(--color-accent); flex-shrink:0;
+  }
+  .brand-name{ font-family:var(--font-display); font-size:1.05rem; letter-spacing:0.06em; text-transform:uppercase; line-height:1.1; }
+  .brand-name span{ display:block; font-family:var(--font-body); font-weight:400; font-size:0.62rem; letter-spacing:0.22em; color:var(--color-accent); margin-top:2px; }
+
+  .nav-links{ display:flex; align-items:center; gap:2px; }
+  .nav-links a{
+    color:#D8DED9; font-size:0.82rem; font-weight:600; letter-spacing:0.05em;
+    text-transform:uppercase; padding:10px 16px; border-radius:var(--radius);
+    transition:color var(--transition), background var(--transition);
+  }
+  .nav-links a:hover{ color:var(--color-white); background:rgba(255,255,255,0.06); }
+  .nav-links a.active{ color:var(--color-accent); }
+
+  .nav-toggle{
+    display:none; flex-direction:column; justify-content:center; gap:5px;
+    width:40px; height:40px; background:transparent; border:none; padding:0;
+  }
+  .nav-toggle span{ width:100%; height:2px; background:var(--color-white); transition:transform var(--transition), opacity var(--transition); }
+  .nav-toggle.is-open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2){ opacity:0; }
+  .nav-toggle.is-open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  /* ============================================
+     PAGE HERO
+  ============================================ */
+  .page-hero{
+    position:relative; min-height:52vh; display:flex; align-items:flex-end;
+    color:var(--color-white); overflow:hidden; background-color:var(--color-primary-dark);
+    padding-top:76px;
+  }
+  .page-hero-media{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(180deg, rgba(8,28,20,0.55) 0%, rgba(8,28,20,0.82) 60%, rgba(8,28,20,0.97) 100%),
+      url('../images/club/media-hero.jpg');
+    background-size:cover; background-position:center;
+  }
+  .page-hero-media::after{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 90px);
+    pointer-events:none;
+  }
+  .page-hero-content{ position:relative; z-index:2; padding:56px 0 48px; max-width:720px; }
+  .page-hero-eyebrow{
+    display:inline-block; font-size:0.8rem; font-weight:700; letter-spacing:0.24em;
+    text-transform:uppercase; color:var(--color-accent); margin-bottom:18px;
+  }
+  .page-hero-title{ font-size:clamp(2.1rem, 5.6vw, 3.6rem); line-height:1.02; text-transform:uppercase; }
+  .page-hero-lead{ margin-top:18px; font-size:clamp(1rem, 1.4vw, 1.15rem); max-width:52ch; color:#E4E9E4; }
+
+  /* ============================================
+     INTRO
+  ============================================ */
+  .intro-layout{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+  .intro-text p{ color:var(--color-text-muted); font-size:1.02rem; margin-bottom:16px; }
+  .intro-stat-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .intro-stat{
+    background:var(--color-white); border:1px solid var(--color-line); border-radius:var(--radius);
+    padding:24px; text-align:center;
+  }
+  .intro-stat-num{ font-family:var(--font-display); font-size:1.6rem; color:var(--color-accent); }
+  .intro-stat-label{ margin-top:6px; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--color-text-muted); }
+
+  /* ============================================
+     FILTERS
+  ============================================ */
+  .filter-row{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:40px; }
+  .filter-btn{
+    padding:10px 20px; border-radius:30px; border:1px solid var(--color-line);
+    background:var(--color-white); font-size:0.78rem; font-weight:700;
+    letter-spacing:0.06em; text-transform:uppercase; color:var(--color-text-muted);
+    transition:background var(--transition), color var(--transition), border-color var(--transition);
+  }
+  .filter-btn:hover{ border-color:var(--color-primary); color:var(--color-primary); }
+  .filter-btn.is-active{ background:var(--color-primary); border-color:var(--color-primary); color:var(--color-white); }
+
+  /* ============================================
+     MASONRY GALLERY
+  ============================================ */
+  .masonry-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    grid-auto-rows:130px;
+    gap:14px;
+  }
+  .gallery-item{
+    position:relative;
+    border-radius:var(--radius);
+    overflow:hidden;
+    background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary));
+    cursor:pointer;
+    border:none;
+    padding:0;
+    display:block;
+    width:100%;
+    height:100%;
+  }
+  .gallery-item img{
+    width:100%; height:100%; object-fit:cover;
+    transition:transform 450ms ease;
+  }
+  .gallery-item:hover img{ transform:scale(1.08); }
+  .gallery-overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(0deg, rgba(8,28,20,0.88) 0%, rgba(8,28,20,0) 55%);
+    display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end;
+    padding:16px;
+    opacity:0;
+    transition:opacity var(--transition);
+    text-align:left;
+  }
+  .gallery-item:hover .gallery-overlay{ opacity:1; }
+  .gallery-overlay .cap-title{ color:var(--color-white); font-size:0.88rem; font-weight:700; text-transform:uppercase; letter-spacing:0.02em; }
+  .gallery-overlay .cap-cat{ margin-top:4px; color:var(--color-accent); font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+  .gallery-expand{
+    position:absolute; top:12px; right:12px;
+    width:30px; height:30px; border-radius:50%;
+    background:rgba(8,28,20,0.55); color:var(--color-white);
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.9rem; opacity:0; transition:opacity var(--transition);
+  }
+  .gallery-item:hover .gallery-expand{ opacity:1; }
+
+  /* Masonry span variety */
+  .g-large{ grid-column:span 2; grid-row:span 2; }
+  .g-tall{ grid-row:span 2; }
+  .g-wide{ grid-column:span 2; }
+
+  /* ============================================
+     LIGHTBOX
+  ============================================ */
+  .lightbox{
+    position:fixed; inset:0; z-index:2000;
+    background:rgba(6,18,13,0.96);
+    display:none;
+    align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .lightbox.is-open{ display:flex; }
+  .lightbox-content{
+    position:relative;
+    max-width:min(920px, 92vw);
+    max-height:86vh;
+    width:100%;
+  }
+  .lightbox-content img{
+    width:100%; max-height:74vh; object-fit:contain;
+    border-radius:var(--radius);
+    background:var(--color-primary-dark);
+  }
+  .lightbox-caption{ margin-top:16px; text-align:center; color:var(--color-white); }
+  .lightbox-caption .cap-title{ font-family:var(--font-display); font-size:1.1rem; text-transform:uppercase; }
+  .lightbox-caption .cap-cat{ margin-top:4px; font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-accent); }
+  .lightbox-close{
+    position:absolute; top:-46px; right:0;
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(255,255,255,0.1); color:var(--color-white);
+    border:1px solid rgba(255,255,255,0.2);
+    display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+    transition:background var(--transition);
+  }
+  .lightbox-close:hover{ background:rgba(255,255,255,0.2); }
+  .lightbox-nav{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:44px; height:44px; border-radius:50%;
+    background:rgba(255,255,255,0.1); color:var(--color-white);
+    border:1px solid rgba(255,255,255,0.2);
+    display:flex; align-items:center; justify-content:center; font-size:1.2rem;
+    transition:background var(--transition);
+  }
+  .lightbox-nav:hover{ background:rgba(255,255,255,0.2); }
+  .lightbox-prev{ left:-56px; }
+  .lightbox-next{ right:-56px; }
+
+  /* ============================================
+     EMPTY STATE
+  ============================================ */
+  .empty-state{
+    text-align:center; padding:64px 24px;
+    background:var(--color-bg-alt); border:1px dashed var(--color-line);
+    border-radius:var(--radius); display:none;
+  }
+  .empty-state.is-visible{ display:block; }
+  .empty-state-title{ font-family:var(--font-display); font-size:1.2rem; text-transform:uppercase; color:var(--color-primary); }
+  .empty-state-text{ margin-top:10px; font-size:0.92rem; color:var(--color-text-muted); max-width:44ch; margin-left:auto; margin-right:auto; }
+
+  /* ============================================
+     FEATURED VIDEO
+  ============================================ */
+  .featured-video{
+    position:relative;
+    border-radius:var(--radius);
+    overflow:hidden;
+    aspect-ratio:16/8;
+    background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary-dark));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .featured-video-overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(0deg, rgba(6,18,13,0.85) 0%, rgba(6,18,13,0.25) 100%);
+    display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end;
+    padding:40px;
+  }
+  .play-btn{
+    width:76px; height:76px; border-radius:50%;
+    background:var(--color-accent); color:var(--color-primary-dark);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem; margin-bottom:22px;
+    transition:transform var(--transition);
+    border:none;
+  }
+  .featured-video:hover .play-btn{ transform:scale(1.08); }
+  .featured-video-title{ color:var(--color-white); font-size:1.4rem; text-transform:uppercase; }
+  .featured-video-tag{ margin-top:8px; color:var(--color-accent); font-size:0.78rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+
+  /* ============================================
+     VIDEO GRID
+  ============================================ */
+  .video-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:22px; margin-top:44px; }
+  .video-card{
+    background:var(--color-white); border:1px solid var(--color-line);
+    border-radius:var(--radius); overflow:hidden;
+    transition:transform var(--transition), box-shadow var(--transition);
+  }
+  .video-card:hover{ transform:translateY(-6px); box-shadow:0 18px 32px rgba(14,42,31,0.1); }
+  .video-thumb{
+    aspect-ratio:16/10; position:relative;
+    background:linear-gradient(155deg, #dfe4dc, #c9d1c5);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .video-thumb .play-btn{ width:52px; height:52px; font-size:1.05rem; margin-bottom:0; }
+  .video-body{ padding:18px 20px 22px; }
+  .video-title{ font-size:1rem; text-transform:uppercase; letter-spacing:0.02em; }
+  .video-cat{ margin-top:6px; font-size:0.74rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--color-accent); }
+
+  /* ============================================
+     MOMENTS THAT MATTER
+  ============================================ */
+  .moments-track{
+    display:grid; grid-template-columns:repeat(6, 1fr);
+    gap:0; position:relative; margin-top:56px;
+  }
+  .moments-track::before{
+    content:""; position:absolute; top:19px; left:0; right:0; height:2px;
+    background:rgba(255,255,255,0.16);
+  }
+  .moment-step{ position:relative; padding:0 12px; }
+  .moment-num{
+    width:40px; height:40px; border-radius:50%;
+    background:var(--color-primary); border:2px solid var(--color-accent); color:var(--color-accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:0.85rem; margin-bottom:20px; position:relative; z-index:1;
+  }
+  .moment-title{ font-size:0.9rem; letter-spacing:0.03em; text-transform:uppercase; color:var(--color-white); }
+  .moment-text{ margin-top:8px; font-size:0.8rem; color:#B9C4BC; }
+
+  /* ============================================
+     SOCIAL CTA
+  ============================================ */
+  .cta{
+    background:var(--color-primary); color:var(--color-white);
+    border-radius:var(--radius); padding:72px 56px; text-align:center;
+    position:relative; overflow:hidden;
+  }
+  .cta::before{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(227,161,48,0.05) 0 2px, transparent 2px 60px);
+  }
+  .cta-inner{ position:relative; z-index:1; max-width:640px; margin:0 auto; }
+  .cta-title{ font-size:clamp(2rem, 4vw, 3rem); text-transform:uppercase; }
+  .cta-text{ margin-top:16px; color:#C7D3CC; font-size:1.02rem; }
+  .social-cta-row{
+    margin-top:36px; display:flex; flex-wrap:wrap; justify-content:center; gap:14px;
+    position:relative; z-index:1;
+  }
+  .social-cta-btn{
+    display:flex; align-items:center; gap:10px;
+    padding:13px 24px; border-radius:30px;
+    border:1.5px solid rgba(255,255,255,0.25);
+    font-size:0.8rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;
+    transition:background var(--transition), border-color var(--transition);
+  }
+  .social-cta-btn:hover{ background:rgba(255,255,255,0.1); border-color:var(--color-accent); }
+
+  /* ============================================
+     FOOTER
+  ============================================ */
+  .site-footer{ background:var(--color-primary-dark); color:#B9C4BC; padding:64px 0 28px; }
+  .footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr; gap:40px; }
+  .footer-brand .brand{ color:var(--color-white); margin-bottom:16px; }
+  .footer-statement{ font-size:0.92rem; max-width:34ch; color:#9AA79F; }
+  .footer-philosophy{ margin-top:18px; font-family:var(--font-display); font-size:0.85rem; letter-spacing:0.1em; color:var(--color-accent); text-transform:uppercase; }
+  .footer-heading{ font-size:0.78rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-white); margin-bottom:18px; }
+  .footer-links li{ margin-bottom:11px; }
+  .footer-links a{ font-size:0.9rem; color:#B9C4BC; transition:color var(--transition); }
+  .footer-links a:hover{ color:var(--color-accent); }
+  .footer-contact li{ margin-bottom:11px; font-size:0.9rem; }
+  .social-row{ display:flex; gap:10px; margin-top:18px; }
+  .social-icon{
+    width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center; font-size:0.78rem;
+    transition:border-color var(--transition), color var(--transition);
+  }
+  .social-icon:hover{ border-color:var(--color-accent); color:var(--color-accent); }
+  .footer-bottom{
+    margin-top:56px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    font-size:0.82rem; color:#7E8B83;
+  }
+
+  /* ============================================
+     RESPONSIVE
+  ============================================ */
+  @media (max-width:1024px){
+    .intro-layout{ grid-template-columns:1fr; }
+    .masonry-grid{ grid-template-columns:repeat(3, 1fr); }
+    .g-large{ grid-column:span 2; grid-row:span 2; }
+    .video-grid{ grid-template-columns:1fr 1fr; }
+    .moments-track{ grid-template-columns:repeat(3,1fr); row-gap:36px; }
+    .moments-track::before{ display:none; }
+    .lightbox-prev{ left:8px; }
+    .lightbox-next{ right:8px; }
+    .footer-grid{ grid-template-columns:1fr 1fr; row-gap:36px; }
+  }
+
+  @media (max-width:760px){
+    .section{ padding:64px 0; }
+    .nav-links{
+      position:fixed; top:76px; left:0; right:0;
+      flex-direction:column; align-items:stretch;
+      background:var(--color-primary-dark);
+      padding:10px 24px 26px; gap:0;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      transform:translateY(-8px); opacity:0; pointer-events:none;
+      transition:opacity var(--transition), transform var(--transition);
+    }
+    .nav-links.is-open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+    .nav-links a{ padding:14px 4px; border-bottom:1px solid rgba(255,255,255,0.06); border-radius:0; }
+    .nav-toggle{ display:flex; }
+
+    .intro-stat-row{ grid-template-columns:1fr 1fr; }
+    .masonry-grid{ grid-template-columns:repeat(2, 1fr); grid-auto-rows:120px; }
+    .g-large{ grid-column:span 2; grid-row:span 2; }
+    .g-wide{ grid-column:span 2; grid-row:span 1; }
+    .g-tall{ grid-column:span 1; grid-row:span 2; }
+    .video-grid{ grid-template-columns:1fr; }
+    .moments-track{ grid-template-columns:1fr 1fr; }
+    .lightbox-nav{ width:38px; height:38px; font-size:1rem; }
+    .footer-grid{ grid-template-columns:1fr; }
+    .cta{ padding:52px 26px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HEADER / NAVIGATION
+============================================ -->
+<header class="site-header">
+  <div class="container nav">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark">LFC</span>
+      <span class="brand-name">Learners FC<span>Learn · Relearn · Unlearn</span></span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="fixtures.html">Fixtures</a></li>
+        <li><a href="news.html">News</a></li>
+        <li><a href="media.html" class="active" aria-current="page">Media</a></li>
+        <li><a href="development.html">Development</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============================================
+     PAGE HERO
+============================================ -->
+<section class="page-hero">
+  <div class="page-hero-media" role="img" aria-label="Learners FC moments"></div>
+  <div class="container page-hero-content">
+    <span class="page-hero-eyebrow">Media</span>
+    <h1 class="page-hero-title">Inside Learners FC</h1>
+    <p class="page-hero-lead">The moments, memories and people behind the journey.</p>
+  </div>
+</section>
+
+<!-- ============================================
+     MEDIA INTRODUCTION
+============================================ -->
+<section class="section" id="intro">
+  <div class="container">
+    <div class="intro-layout">
+      <div class="reveal">
+        <span class="eyebrow">Documenting Growth</span>
+        <h2 class="section-title" style="margin-top:12px;">Capturing The Journey</h2>
+        <div class="intro-text" style="margin-top:22px;">
+          <p>This page exists to document the growth of Learners FC — one training session, one matchday and one moment at a time.</p>
+          <p>Today's photographs and videos are tomorrow's history. As the club grows, this gallery grows with it.</p>
+        </div>
+      </div>
+
+      <div class="intro-stat-row reveal">
+        <div class="intro-stat">
+          <div class="intro-stat-num">01</div>
+          <div class="intro-stat-label">Journey Begins</div>
+        </div>
+        <div class="intro-stat">
+          <div class="intro-stat-num">∞</div>
+          <div class="intro-stat-label">Moments Ahead</div>
+        </div>
+        <div class="intro-stat">
+          <div class="intro-stat-num">LFC</div>
+          <div class="intro-stat-label">One Club</div>
+        </div>
+        <div class="intro-stat">
+          <div class="intro-stat-num">3</div>
+          <div class="intro-stat-label">Guiding Words</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     GALLERY + FILTERS
+============================================ -->
+<section class="section section-alt" id="gallery">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Photography</span>
+      <h2 class="section-title">The Gallery</h2>
+      <p class="section-sub">Browse by category. Click any image to view it larger.</p>
+    </div>
+
+    <div class="filter-row reveal" role="group" aria-label="Filter gallery">
+      <button class="filter-btn is-active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="training">Training</button>
+      <button class="filter-btn" data-filter="matchday">Matchday</button>
+      <button class="filter-btn" data-filter="players">Players</button>
+      <button class="filter-btn" data-filter="club">Club</button>
+      <button class="filter-btn" data-filter="events">Events</button>
+    </div>
+
+    <div class="masonry-grid reveal" id="masonryGrid">
+      <button class="gallery-item g-large" data-category="training" data-title="Training Day" data-cat-label="Training" data-src="../images/gallery/photo-01.jpg">
+        <img src="../images/gallery/photo-01.jpg" alt="Training Day" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Training Day</span><span class="cap-cat">Training</span></span>
+      </button>
+
+      <button class="gallery-item" data-category="matchday" data-title="Matchday Focus" data-cat-label="Matchday" data-src="../images/gallery/photo-02.jpg">
+        <img src="../images/gallery/photo-02.jpg" alt="Matchday Focus" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Matchday Focus</span><span class="cap-cat">Matchday</span></span>
+      </button>
+
+      <button class="gallery-item g-tall" data-category="players" data-title="Squad Portrait" data-cat-label="Players" data-src="../images/gallery/photo-03.jpg">
+        <img src="../images/gallery/photo-03.jpg" alt="Squad Portrait" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Squad Portrait</span><span class="cap-cat">Players</span></span>
+      </button>
+
+      <button class="gallery-item" data-category="club" data-title="Club Life" data-cat-label="Club" data-src="../images/gallery/photo-04.jpg">
+        <img src="../images/gallery/photo-04.jpg" alt="Club Life" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Club Life</span><span class="cap-cat">Club</span></span>
+      </button>
+
+      <button class="gallery-item g-wide" data-category="training" data-title="On The Training Ground" data-cat-label="Training" data-src="../images/gallery/photo-05.jpg">
+        <img src="../images/gallery/photo-05.jpg" alt="On The Training Ground" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">On The Training Ground</span><span class="cap-cat">Training</span></span>
+      </button>
+
+      <button class="gallery-item" data-category="events" data-title="Club Event" data-cat-label="Events" data-src="../images/gallery/photo-06.jpg">
+        <img src="../images/gallery/photo-06.jpg" alt="Club Event" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Club Event</span><span class="cap-cat">Events</span></span>
+      </button>
+
+      <button class="gallery-item" data-category="matchday" data-title="Matchday Huddle" data-cat-label="Matchday" data-src="../images/gallery/photo-07.jpg">
+        <img src="../images/gallery/photo-07.jpg" alt="Matchday Huddle" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Matchday Huddle</span><span class="cap-cat">Matchday</span></span>
+      </button>
+
+      <button class="gallery-item g-tall" data-category="players" data-title="Player Focus" data-cat-label="Players" data-src="../images/gallery/photo-08.jpg">
+        <img src="../images/gallery/photo-08.jpg" alt="Player Focus" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Player Focus</span><span class="cap-cat">Players</span></span>
+      </button>
+
+      <button class="gallery-item" data-category="club" data-title="Club Colours" data-cat-label="Club" data-src="../images/gallery/photo-09.jpg">
+        <img src="../images/gallery/photo-09.jpg" alt="Club Colours" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Club Colours</span><span class="cap-cat">Club</span></span>
+      </button>
+
+      <button class="gallery-item g-wide" data-category="training" data-title="Drills In Motion" data-cat-label="Training" data-src="../images/gallery/photo-10.jpg">
+        <img src="../images/gallery/photo-10.jpg" alt="Drills In Motion" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Drills In Motion</span><span class="cap-cat">Training</span></span>
+      </button>
+
+      <button class="gallery-item" data-category="events" data-title="Community Moment" data-cat-label="Events" data-src="../images/gallery/photo-11.jpg">
+        <img src="../images/gallery/photo-11.jpg" alt="Community Moment" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Community Moment</span><span class="cap-cat">Events</span></span>
+      </button>
+
+      <button class="gallery-item" data-category="matchday" data-title="Matchday Detail" data-cat-label="Matchday" data-src="../images/gallery/photo-12.jpg">
+        <img src="../images/gallery/photo-12.jpg" alt="Matchday Detail" loading="lazy" onerror="this.style.display='none';">
+        <span class="gallery-expand">⤢</span>
+        <span class="gallery-overlay"><span class="cap-title">Matchday Detail</span><span class="cap-cat">Matchday</span></span>
+      </button>
+    </div>
+
+    <div class="empty-state" id="galleryEmptyState">
+      <h3 class="empty-state-title">The Story Is Just Beginning</h3>
+      <p class="empty-state-text">New photos and videos will appear here as the Learners FC journey unfolds.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     LIGHTBOX
+============================================ -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <div class="lightbox-content">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close image viewer">✕</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image">‹</button>
+    <img id="lightboxImage" src="" alt="">
+    <div class="lightbox-caption">
+      <div class="cap-title" id="lightboxTitle"></div>
+      <div class="cap-cat" id="lightboxCat"></div>
+    </div>
+    <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image">›</button>
+  </div>
+</div>
+
+<!-- ============================================
+     FEATURED VIDEO
+============================================ -->
+<section class="section" id="featured-video">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Watch</span>
+      <h2 class="section-title">Featured</h2>
+    </div>
+
+    <a href="#" class="featured-video reveal" aria-label="Play featured video: The Learners FC Journey">
+      <div class="featured-video-overlay">
+        <span class="play-btn">▶</span>
+        <h3 class="featured-video-title">The Learners FC Journey</h3>
+        <span class="featured-video-tag">Featured Video — Coming Soon</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ============================================
+     WATCH LEARNERS FC — VIDEO GRID
+============================================ -->
+<section class="section section-alt" id="videos">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">More To Watch</span>
+      <h2 class="section-title">Watch Learners FC</h2>
+      <p class="section-sub">Training footage, match highlights, coach messages and player interviews will live here as they're produced.</p>
+    </div>
+
+    <div class="video-grid">
+      <article class="video-card reveal">
+        <a href="#" class="video-thumb" aria-label="Play video: Training Highlights">
+          <span class="play-btn">▶</span>
+        </a>
+        <div class="video-body">
+          <h3 class="video-title">Training Highlights</h3>
+          <p class="video-cat">Training</p>
+        </div>
+      </article>
+
+      <article class="video-card reveal">
+        <a href="#" class="video-thumb" aria-label="Play video: Match Highlights">
+          <span class="play-btn">▶</span>
+        </a>
+        <div class="video-body">
+          <h3 class="video-title">Match Highlights</h3>
+          <p class="video-cat">Matchday</p>
+        </div>
+      </article>
+
+      <article class="video-card reveal">
+        <a href="#" class="video-thumb" aria-label="Play video: A Message From The Coach">
+          <span class="play-btn">▶</span>
+        </a>
+        <div class="video-body">
+          <h3 class="video-title">A Message From The Coach</h3>
+          <p class="video-cat">Coach Message</p>
+        </div>
+      </article>
+
+      <article class="video-card reveal">
+        <a href="#" class="video-thumb" aria-label="Play video: Player Interview">
+          <span class="play-btn">▶</span>
+        </a>
+        <div class="video-body">
+          <h3 class="video-title">Player Interview</h3>
+          <p class="video-cat">Players</p>
+        </div>
+      </article>
+
+      <article class="video-card reveal">
+        <a href="#" class="video-thumb" aria-label="Play video: Club Announcement">
+          <span class="play-btn">▶</span>
+        </a>
+        <div class="video-body">
+          <h3 class="video-title">Club Announcement</h3>
+          <p class="video-cat">Club</p>
+        </div>
+      </article>
+
+      <article class="video-card reveal">
+        <a href="#" class="video-thumb" aria-label="Play video: Behind The Scenes">
+          <span class="play-btn">▶</span>
+        </a>
+        <div class="video-body">
+          <h3 class="video-title">Behind The Scenes</h3>
+          <p class="video-cat">Club</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     MOMENTS THAT MATTER
+============================================ -->
+<section class="section section-dark" id="moments">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="color:var(--color-accent)">Milestones Ahead</span>
+      <h2 class="section-title">Moments That Matter</h2>
+      <p class="section-sub">These are the milestones Learners FC will document as the club grows — captured here as they happen.</p>
+    </div>
+
+    <div class="moments-track">
+      <div class="moment-step reveal">
+        <div class="moment-num">1</div>
+        <h3 class="moment-title">First Training</h3>
+        <p class="moment-text">The very first session on the training ground.</p>
+      </div>
+      <div class="moment-step reveal">
+        <div class="moment-num">2</div>
+        <h3 class="moment-title">First Team Photo</h3>
+        <p class="moment-text">The squad, together, for the first time.</p>
+      </div>
+      <div class="moment-step reveal">
+        <div class="moment-num">3</div>
+        <h3 class="moment-title">First Match</h3>
+        <p class="moment-text">Stepping onto the pitch as Learners FC.</p>
+      </div>
+      <div class="moment-step reveal">
+        <div class="moment-num">4</div>
+        <h3 class="moment-title">First Goal</h3>
+        <p class="moment-text">A moment the club will remember.</p>
+      </div>
+      <div class="moment-step reveal">
+        <div class="moment-num">5</div>
+        <h3 class="moment-title">First Victory</h3>
+        <p class="moment-text">Proof of the process, on the scoreboard.</p>
+      </div>
+      <div class="moment-step reveal">
+        <div class="moment-num">6</div>
+        <h3 class="moment-title">First Tournament</h3>
+        <p class="moment-text">Learners FC, tested on a bigger stage.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     SOCIAL MEDIA CTA
+============================================ -->
+<section class="section" id="social-cta">
+  <div class="container">
+    <div class="cta reveal">
+      <div class="cta-inner">
+        <h2 class="cta-title">Follow The Journey</h2>
+        <p class="cta-text">More moments. More lessons. More Learners.</p>
+      </div>
+      <div class="social-cta-row">
+        <a href="#" class="social-cta-btn">Instagram</a>
+        <a href="#" class="social-cta-btn">Facebook</a>
+        <a href="#" class="social-cta-btn">TikTok</a>
+        <a href="#" class="social-cta-btn">YouTube</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTER
+============================================ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="brand">
+          <span class="brand-mark">LFC</span>
+          <span class="brand-name">Learners FC</span>
+        </a>
+        <p class="footer-statement">Preparing the next generation to be ready for anything — on the pitch and in life.</p>
+        <p class="footer-philosophy">Learn. Relearn. Unlearn.</p>
+        <div class="social-row" aria-label="Social media links">
+          <a href="#" class="social-icon" aria-label="Facebook">f</a>
+          <a href="#" class="social-icon" aria-label="Instagram">ig</a>
+          <a href="#" class="social-icon" aria-label="X / Twitter">x</a>
+          <a href="#" class="social-icon" aria-label="YouTube">yt</a>
+        </div>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="team.html">Team</a></li>
+          <li><a href="fixtures.html">Fixtures</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">More</h3>
+        <ul class="footer-links">
+          <li><a href="news.html">News</a></li>
+          <li><a href="media.html">Media</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact-wrap">
+        <h3 class="footer-heading">Contact</h3>
+        <ul class="footer-contact">
+          <li>Address — Placeholder</li>
+          <li>Phone — Placeholder</li>
+          <li>Email — Placeholder</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Learners FC. All rights reserved.</span>
+      <span>Learn. Relearn. Unlearn.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    "use strict";
+
+    /* 1. Mobile navigation toggle */
+    var navToggle = document.getElementById('navToggle');
+    var navLinks  = document.getElementById('navLinks');
+
+    navToggle.addEventListener('click', function(){
+      var isOpen = navLinks.classList.toggle('is-open');
+      navToggle.classList.toggle('is-open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    navLinks.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click', function(){
+        navLinks.classList.remove('is-open');
+        navToggle.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* 2. Dynamic copyright year */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* 3. Smooth scroll for in-page anchors */
+    document.querySelectorAll('a[href^="#"]').forEach(function(link){
+      link.addEventListener('click', function(e){
+        var targetId = link.getAttribute('href');
+        if(targetId.length > 1 && document.querySelector(targetId)){
+          e.preventDefault();
+          document.querySelector(targetId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    /* 4. Scroll-reveal animations */
+    var revealEls = document.querySelectorAll('.reveal');
+    if('IntersectionObserver' in window){
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
+
+      revealEls.forEach(function(el){ observer.observe(el); });
+    } else {
+      revealEls.forEach(function(el){ el.classList.add('is-visible'); });
+    }
+
+    /* 5. Header background strengthens on scroll */
+    var header = document.querySelector('.site-header');
+    var onScroll = function(){
+      header.style.background = window.scrollY > 40 ? 'rgba(8,28,20,0.97)' : 'rgba(14,42,31,0.92)';
+    };
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+
+    /* 6. Gallery filtering */
+    var filterButtons = document.querySelectorAll('#gallery .filter-btn');
+    var galleryItems = document.querySelectorAll('#masonryGrid .gallery-item');
+    var galleryEmptyState = document.getElementById('galleryEmptyState');
+
+    function applyFilter(filter){
+      var visibleCount = 0;
+      galleryItems.forEach(function(item){
+        var matches = filter === 'all' || filter === item.getAttribute('data-category');
+        item.style.display = matches ? '' : 'none';
+        if(matches) visibleCount++;
+      });
+      galleryEmptyState.classList.toggle('is-visible', visibleCount === 0);
+    }
+
+    filterButtons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        filterButtons.forEach(function(b){ b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        applyFilter(btn.getAttribute('data-filter'));
+      });
+    });
+
+    /* 7. Lightbox */
+    var lightbox        = document.getElementById('lightbox');
+    var lightboxImage    = document.getElementById('lightboxImage');
+    var lightboxTitle     = document.getElementById('lightboxTitle');
+    var lightboxCat       = document.getElementById('lightboxCat');
+    var lightboxClose     = document.getElementById('lightboxClose');
+    var lightboxPrevBtn   = document.getElementById('lightboxPrev');
+    var lightboxNextBtn   = document.getElementById('lightboxNext');
+    var galleryItemsArr   = Array.prototype.slice.call(galleryItems);
+    var currentIndex      = 0;
+
+    function getVisibleItems(){
+      return galleryItemsArr.filter(function(item){ return item.style.display !== 'none'; });
+    }
+
+    function openLightbox(item){
+      var visible = getVisibleItems();
+      currentIndex = visible.indexOf(item);
+      renderLightbox(visible);
+      lightbox.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function renderLightbox(visible){
+      var item = visible[currentIndex];
+      if(!item) return;
+      lightboxImage.src = item.getAttribute('data-src');
+      lightboxImage.alt = item.getAttribute('data-title') || '';
+      lightboxTitle.textContent = item.getAttribute('data-title') || '';
+      lightboxCat.textContent = item.getAttribute('data-cat-label') || '';
+    }
+
+    function closeLightbox(){
+      lightbox.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    function stepLightbox(direction){
+      var visible = getVisibleItems();
+      if(visible.length === 0) return;
+      currentIndex = (currentIndex + direction + visible.length) % visible.length;
+      renderLightbox(visible);
+    }
+
+    galleryItemsArr.forEach(function(item){
+      item.addEventListener('click', function(){ openLightbox(item); });
+    });
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxPrevBtn.addEventListener('click', function(){ stepLightbox(-1); });
+    lightboxNextBtn.addEventListener('click', function(){ stepLightbox(1); });
+
+    lightbox.addEventListener('click', function(e){
+      if(e.target === lightbox){ closeLightbox(); }
+    });
+
+    document.addEventListener('keydown', function(e){
+      if(!lightbox.classList.contains('is-open')) return;
+      if(e.key === 'Escape'){ closeLightbox(); }
+      if(e.key === 'ArrowLeft'){ stepLightbox(-1); }
+      if(e.key === 'ArrowRight'){ stepLightbox(1); }
+    });
+
+  })();
+</script>
+
+</body>
+</html>

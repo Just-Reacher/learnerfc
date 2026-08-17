@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Development — Learners FC</title>
+<meta name="description" content="How Learners FC approaches player development — learning, relearning and unlearning on the pitch and in life.">
+
+<style>
+  /* ============================================
+     0. DESIGN TOKENS — identical across the site
+  ============================================ */
+  :root{
+    --color-primary:       #0E2A1F;
+    --color-primary-light: #1D4834;
+    --color-primary-dark:  #081C14;
+    --color-bg:            #FFFFFF;
+    --color-bg-alt:        #F4F5F1;
+    --color-accent:        #E3A130;
+    --color-text:          #12201A;
+    --color-text-muted:    #5C6A62;
+    --color-line:          #E1E4DD;
+    --color-white:         #FFFFFF;
+
+    --font-display: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --container: 1180px;
+    --radius: 6px;
+    --transition: 220ms ease;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; font-family:var(--font-body); color:var(--color-text);
+    background:var(--color-bg); line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  ul{ list-style:none; margin:0; padding:0; }
+  h1,h2,h3,h4{ margin:0; font-family:var(--font-display); letter-spacing:0.01em; }
+  p{ margin:0; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  .container{ max-width:var(--container); margin:0 auto; padding:0 24px; }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:0.78rem; font-weight:700; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--color-accent);
+  }
+  .eyebrow::before{ content:""; width:28px; height:2px; background:var(--color-accent); display:inline-block; }
+
+  .section{ padding:96px 0; }
+  .section-alt{ background:var(--color-bg-alt); }
+  .section-dark{ background:var(--color-primary); color:var(--color-white); }
+  .section-head{ max-width:680px; margin-bottom:48px; }
+  .section-head.center{ margin-left:auto; margin-right:auto; text-align:center; }
+  .section-head.center .section-sub{ margin-left:auto; margin-right:auto; }
+  .section-title{ font-size:clamp(1.9rem, 3.4vw, 2.7rem); line-height:1.08; margin-top:12px; text-transform:uppercase; }
+  .section-sub{ margin-top:16px; color:var(--color-text-muted); font-size:1.02rem; max-width:56ch; }
+  .section-dark .section-sub{ color:#C7D3CC; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    padding:15px 30px; border-radius:var(--radius); font-weight:700;
+    font-size:0.82rem; letter-spacing:0.09em; text-transform:uppercase;
+    border:2px solid transparent;
+    transition:transform var(--transition), background var(--transition), color var(--transition), border-color var(--transition);
+    white-space:nowrap;
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn-primary{ background:var(--color-accent); color:var(--color-primary-dark); }
+  .btn-primary:hover{ background:#f0b04f; }
+  .btn-outline{ background:transparent; border-color:currentColor; color:inherit; }
+  .btn-outline:hover{ background:rgba(255,255,255,0.12); }
+  .btn-outline-dark{ background:transparent; border-color:var(--color-primary); color:var(--color-primary); }
+  .btn-outline-dark:hover{ background:var(--color-primary); color:var(--color-white); }
+
+  .reveal{ opacity:0; transform:translateY(26px); transition:opacity 700ms ease, transform 700ms ease; }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+
+  /* ============================================
+     HEADER / NAV
+  ============================================ */
+  .site-header{
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    background:rgba(14,42,31,0.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    transition:background var(--transition);
+  }
+  .nav{ display:flex; align-items:center; justify-content:space-between; height:76px; }
+  .brand{ display:flex; align-items:center; gap:12px; color:var(--color-white); }
+  .brand-mark{
+    width:42px; height:42px; border-radius:50%; border:2px solid var(--color-accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:0.95rem; color:var(--color-accent); flex-shrink:0;
+  }
+  .brand-name{ font-family:var(--font-display); font-size:1.05rem; letter-spacing:0.06em; text-transform:uppercase; line-height:1.1; }
+  .brand-name span{ display:block; font-family:var(--font-body); font-weight:400; font-size:0.62rem; letter-spacing:0.22em; color:var(--color-accent); margin-top:2px; }
+
+  .nav-links{ display:flex; align-items:center; gap:2px; }
+  .nav-links a{
+    color:#D8DED9; font-size:0.82rem; font-weight:600; letter-spacing:0.05em;
+    text-transform:uppercase; padding:10px 16px; border-radius:var(--radius);
+    transition:color var(--transition), background var(--transition);
+  }
+  .nav-links a:hover{ color:var(--color-white); background:rgba(255,255,255,0.06); }
+  .nav-links a.active{ color:var(--color-accent); }
+
+  .nav-toggle{
+    display:none; flex-direction:column; justify-content:center; gap:5px;
+    width:40px; height:40px; background:transparent; border:none; padding:0;
+  }
+  .nav-toggle span{ width:100%; height:2px; background:var(--color-white); transition:transform var(--transition), opacity var(--transition); }
+  .nav-toggle.is-open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2){ opacity:0; }
+  .nav-toggle.is-open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  /* ============================================
+     PAGE HERO
+  ============================================ */
+  .page-hero{
+    position:relative; min-height:58vh; display:flex; align-items:flex-end;
+    color:var(--color-white); overflow:hidden; background-color:var(--color-primary-dark);
+    padding-top:76px;
+  }
+  .page-hero-media{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(180deg, rgba(8,28,20,0.55) 0%, rgba(8,28,20,0.82) 60%, rgba(8,28,20,0.97) 100%),
+      url('../images/club/development-hero.jpg');
+    background-size:cover; background-position:center;
+  }
+  .page-hero-media::after{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 90px);
+    pointer-events:none;
+  }
+  .page-hero-content{ position:relative; z-index:2; padding:60px 0 52px; max-width:760px; }
+  .page-hero-eyebrow{
+    display:inline-block; font-size:0.8rem; font-weight:700; letter-spacing:0.24em;
+    text-transform:uppercase; color:var(--color-accent); margin-bottom:18px;
+  }
+  .page-hero-title{ font-size:clamp(2rem, 5.4vw, 3.6rem); line-height:1.05; text-transform:uppercase; }
+  .page-hero-lead{ margin-top:18px; font-size:clamp(1rem, 1.4vw, 1.15rem); max-width:52ch; color:#E4E9E4; }
+
+  /* ============================================
+     INTRO
+  ============================================ */
+  .intro-layout{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+  .intro-text p{ color:var(--color-text-muted); font-size:1.02rem; margin-bottom:16px; }
+  .intro-tags{ display:flex; flex-wrap:wrap; gap:10px; }
+  .intro-tag{
+    padding:9px 16px; border-radius:30px; background:var(--color-bg-alt);
+    border:1px solid var(--color-line); font-size:0.82rem; font-weight:600; color:var(--color-text-muted);
+  }
+
+  /* ============================================
+     THREE PILLARS — large panels
+  ============================================ */
+  .pillars-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  .pillar-panel{
+    position:relative;
+    background:var(--color-white);
+    border:1px solid var(--color-line);
+    border-radius:var(--radius);
+    padding:40px 32px 36px;
+    transition:transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    overflow:hidden;
+  }
+  .pillar-panel::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:var(--color-accent); transform:scaleY(0); transform-origin:bottom;
+    transition:transform 320ms ease;
+  }
+  .pillar-panel:hover{ transform:translateY(-6px); box-shadow:0 18px 34px rgba(14,42,31,0.12); border-color:transparent; }
+  .pillar-panel:hover::before{ transform:scaleY(1); }
+  .pillar-index{ font-family:var(--font-display); font-size:2.6rem; color:var(--color-line); line-height:1; }
+  .pillar-title{ margin-top:16px; font-size:1.4rem; text-transform:uppercase; letter-spacing:0.03em; }
+  .pillar-statement{ margin-top:10px; color:var(--color-accent); font-weight:700; font-size:0.92rem; }
+  .pillar-intro{ margin-top:16px; font-size:0.92rem; color:var(--color-text-muted); }
+  .pillar-areas{ margin-top:20px; padding-top:20px; border-top:1px solid var(--color-line); }
+  .pillar-areas-label{ font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-text-muted); margin-bottom:10px; }
+  .pillar-areas-list li{ font-size:0.88rem; color:var(--color-text-muted); padding-left:16px; position:relative; margin-bottom:8px; }
+  .pillar-areas-list li::before{ content:""; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--color-accent); }
+
+  /* ============================================
+     DEVELOPMENT JOURNEY (vertical progression)
+  ============================================ */
+  .journey-vertical{ max-width:640px; margin:56px auto 0; position:relative; }
+  .journey-vertical::before{
+    content:""; position:absolute; left:19px; top:8px; bottom:8px; width:2px;
+    background:rgba(255,255,255,0.16);
+  }
+  .journey-v-step{ position:relative; padding-left:60px; margin-bottom:36px; }
+  .journey-v-step:last-child{ margin-bottom:0; }
+  .journey-v-num{
+    position:absolute; left:0; top:0;
+    width:40px; height:40px; border-radius:50%;
+    background:var(--color-primary); border:2px solid var(--color-accent); color:var(--color-accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:0.85rem;
+  }
+  .journey-v-title{ font-size:1.05rem; letter-spacing:0.03em; text-transform:uppercase; color:var(--color-white); }
+  .journey-v-text{ margin-top:8px; font-size:0.9rem; color:#B9C4BC; max-width:48ch; }
+
+  /* ============================================
+     MORE THAN A FOOTBALLER — dimension cards
+  ============================================ */
+  .dimension-grid{ display:grid; grid-template-columns:repeat(5, 1fr); gap:18px; }
+  .dimension-card{
+    background:var(--color-white); border:1px solid var(--color-line);
+    border-radius:var(--radius); padding:26px 22px;
+    transition:transform var(--transition), box-shadow var(--transition);
+  }
+  .dimension-card:hover{ transform:translateY(-5px); box-shadow:0 14px 26px rgba(14,42,31,0.1); }
+  .dimension-title{ font-size:0.98rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--color-primary); }
+  .dimension-text{ margin-top:10px; font-size:0.85rem; color:var(--color-text-muted); }
+
+  /* ============================================
+     FOOTBALL AND LIFE
+  ============================================ */
+  .life-layout{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+  .life-photo{
+    aspect-ratio:4/3; border-radius:var(--radius); overflow:hidden;
+    background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary));
+  }
+  .life-photo img{ width:100%; height:100%; object-fit:cover; }
+  .life-list{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:24px; }
+  .life-item{
+    display:flex; align-items:center; gap:10px; padding:12px 14px;
+    background:var(--color-bg-alt); border-radius:var(--radius); font-size:0.88rem; font-weight:600;
+  }
+  .life-item .dot{ width:7px; height:7px; border-radius:50%; background:var(--color-accent); flex-shrink:0; }
+
+  /* ============================================
+     FAILURE / CONSISTENCY SPLIT
+  ============================================ */
+  .split-panels{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .split-panel{
+    background:var(--color-white); border:1px solid var(--color-line);
+    border-radius:var(--radius); padding:40px;
+  }
+  .split-panel-title{ font-size:1.25rem; text-transform:uppercase; color:var(--color-primary); }
+  .split-panel-text{ margin-top:14px; font-size:0.96rem; color:var(--color-text-muted); }
+  .split-panel-list{ margin-top:18px; display:flex; flex-wrap:wrap; gap:10px; }
+  .split-tag{
+    font-size:0.78rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
+    padding:8px 14px; border-radius:20px; background:var(--color-bg-alt); color:var(--color-primary);
+  }
+
+  /* Consistency timeline */
+  .timeline-row{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:0; margin-top:16px; position:relative;
+  }
+  .timeline-row::before{
+    content:""; position:absolute; top:9px; left:0; right:0; height:2px; background:var(--color-line);
+  }
+  .timeline-dot{
+    width:20px; height:20px; border-radius:50%; background:var(--color-accent);
+    border:3px solid var(--color-white); box-shadow:0 0 0 1px var(--color-line);
+    margin-bottom:12px; position:relative; z-index:1;
+  }
+  .timeline-label{ font-size:0.85rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; color:var(--color-primary); }
+
+  /* ============================================
+     COACHING MINDSET
+  ============================================ */
+  .coach-mindset{
+    display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;
+  }
+  .coach-mindset-placeholder{
+    background:rgba(255,255,255,0.05); border:1px dashed rgba(255,255,255,0.25);
+    border-radius:var(--radius); padding:32px; text-align:center;
+  }
+  .coach-mindset-placeholder-title{ font-family:var(--font-display); font-size:1rem; text-transform:uppercase; color:var(--color-accent); }
+  .coach-mindset-placeholder-text{ margin-top:10px; font-size:0.88rem; color:#B9C4BC; }
+
+  /* ============================================
+     DEVELOPMENT AREAS — TABS
+  ============================================ */
+  .tabs-wrap{ max-width:900px; margin:0 auto; }
+  .tab-list{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:36px; }
+  .tab-btn{
+    padding:12px 24px; border-radius:30px; border:1px solid var(--color-line);
+    background:var(--color-white); font-size:0.8rem; font-weight:700;
+    letter-spacing:0.06em; text-transform:uppercase; color:var(--color-text-muted);
+    transition:background var(--transition), color var(--transition), border-color var(--transition);
+  }
+  .tab-btn:hover{ border-color:var(--color-primary); color:var(--color-primary); }
+  .tab-btn.is-active{ background:var(--color-primary); border-color:var(--color-primary); color:var(--color-white); }
+  .tab-panel{
+    display:none;
+    background:var(--color-white); border:1px solid var(--color-line);
+    border-radius:var(--radius); padding:44px;
+  }
+  .tab-panel.is-active{ display:block; }
+  .tab-panel-title{ font-size:1.3rem; text-transform:uppercase; color:var(--color-primary); }
+  .tab-panel-text{ margin-top:16px; font-size:1rem; color:var(--color-text-muted); max-width:64ch; }
+
+  /* ============================================
+     CTA
+  ============================================ */
+  .cta{
+    background:var(--color-primary); color:var(--color-white);
+    border-radius:var(--radius); padding:72px 56px; text-align:center;
+    position:relative; overflow:hidden;
+  }
+  .cta::before{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(227,161,48,0.05) 0 2px, transparent 2px 60px);
+  }
+  .cta-inner{ position:relative; z-index:1; max-width:640px; margin:0 auto; }
+  .cta-title{ font-size:clamp(2rem, 4vw, 3rem); text-transform:uppercase; }
+  .cta-text{ margin-top:16px; color:#C7D3CC; font-size:1.02rem; }
+  .cta-actions{ margin-top:34px; display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
+
+  /* ============================================
+     FOOTER
+  ============================================ */
+  .site-footer{ background:var(--color-primary-dark); color:#B9C4BC; padding:64px 0 28px; }
+  .footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr; gap:40px; }
+  .footer-brand .brand{ color:var(--color-white); margin-bottom:16px; }
+  .footer-statement{ font-size:0.92rem; max-width:34ch; color:#9AA79F; }
+  .footer-philosophy{ margin-top:18px; font-family:var(--font-display); font-size:0.85rem; letter-spacing:0.1em; color:var(--color-accent); text-transform:uppercase; }
+  .footer-heading{ font-size:0.78rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-white); margin-bottom:18px; }
+  .footer-links li{ margin-bottom:11px; }
+  .footer-links a{ font-size:0.9rem; color:#B9C4BC; transition:color var(--transition); }
+  .footer-links a:hover{ color:var(--color-accent); }
+  .footer-contact li{ margin-bottom:11px; font-size:0.9rem; }
+  .social-row{ display:flex; gap:10px; margin-top:18px; }
+  .social-icon{
+    width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center; font-size:0.78rem;
+    transition:border-color var(--transition), color var(--transition);
+  }
+  .social-icon:hover{ border-color:var(--color-accent); color:var(--color-accent); }
+  .footer-bottom{
+    margin-top:56px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    font-size:0.82rem; color:#7E8B83;
+  }
+
+  /* ============================================
+     RESPONSIVE
+  ============================================ */
+  @media (max-width:1024px){
+    .intro-layout{ grid-template-columns:1fr; }
+    .pillars-grid{ grid-template-columns:1fr; }
+    .dimension-grid{ grid-template-columns:repeat(3, 1fr); }
+    .life-layout{ grid-template-columns:1fr; }
+    .split-panels{ grid-template-columns:1fr; }
+    .coach-mindset{ grid-template-columns:1fr; }
+    .timeline-row{ grid-template-columns:1fr 1fr; row-gap:24px; }
+    .timeline-row::before{ display:none; }
+    .footer-grid{ grid-template-columns:1fr 1fr; row-gap:36px; }
+  }
+
+  @media (max-width:760px){
+    .section{ padding:64px 0; }
+    .nav-links{
+      position:fixed; top:76px; left:0; right:0;
+      flex-direction:column; align-items:stretch;
+      background:var(--color-primary-dark);
+      padding:10px 24px 26px; gap:0;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      transform:translateY(-8px); opacity:0; pointer-events:none;
+      transition:opacity var(--transition), transform var(--transition);
+    }
+    .nav-links.is-open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+    .nav-links a{ padding:14px 4px; border-bottom:1px solid rgba(255,255,255,0.06); border-radius:0; }
+    .nav-toggle{ display:flex; }
+
+    .dimension-grid{ grid-template-columns:1fr 1fr; }
+    .life-list{ grid-template-columns:1fr; }
+    .split-panel{ padding:28px; }
+    .timeline-row{ grid-template-columns:1fr 1fr; }
+    .tab-panel{ padding:28px; }
+    .footer-grid{ grid-template-columns:1fr; }
+    .cta{ padding:52px 26px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HEADER / NAVIGATION
+============================================ -->
+<header class="site-header">
+  <div class="container nav">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark">LFC</span>
+      <span class="brand-name">Learners FC<span>Learn · Relearn · Unlearn</span></span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="fixtures.html">Fixtures</a></li>
+        <li><a href="news.html">News</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="development.html" class="active" aria-current="page">Development</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============================================
+     PAGE HERO
+============================================ -->
+<section class="page-hero">
+  <div class="page-hero-media" role="img" aria-label="Learners FC players training"></div>
+  <div class="container page-hero-content">
+    <span class="page-hero-eyebrow">Player Development</span>
+    <h1 class="page-hero-title">This Is How We Build Players.</h1>
+    <p class="page-hero-lead">Development goes beyond the football pitch.</p>
+  </div>
+</section>
+
+<!-- ============================================
+     DEVELOPMENT INTRODUCTION
+============================================ -->
+<section class="section" id="intro">
+  <div class="container">
+    <div class="intro-layout">
+      <div class="reveal">
+        <span class="eyebrow">Where It Starts</span>
+        <h2 class="section-title" style="margin-top:12px;">Development Is A Journey</h2>
+        <div class="intro-text" style="margin-top:22px;">
+          <p>No player becomes complete overnight. Development at Learners FC is a continuous process — one built on learning, practice, mistakes, reflection, adaptation, consistency and growth.</p>
+          <p>We want every player to keep improving, on the pitch and off it, for as long as they're part of this club.</p>
+        </div>
+      </div>
+
+      <div class="intro-tags reveal">
+        <span class="intro-tag">Learning</span>
+        <span class="intro-tag">Practice</span>
+        <span class="intro-tag">Mistakes</span>
+        <span class="intro-tag">Reflection</span>
+        <span class="intro-tag">Adaptation</span>
+        <span class="intro-tag">Consistency</span>
+        <span class="intro-tag">Growth</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     THE THREE PILLARS
+============================================ -->
+<section class="section section-alt" id="pillars">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow" style="justify-content:center;">Our Foundation</span>
+      <h2 class="section-title">Learn. Relearn. Unlearn.</h2>
+      <p class="section-sub">The three ideas that shape every part of how Learners FC develops players.</p>
+    </div>
+
+    <div class="pillars-grid">
+      <article class="pillar-panel reveal">
+        <span class="pillar-index">01</span>
+        <h3 class="pillar-title">Learn</h3>
+        <p class="pillar-statement">We learn the fundamentals of football and life.</p>
+        <p class="pillar-intro">Development begins with learning — taking in the basics before anything else is built on top.</p>
+        <div class="pillar-areas">
+          <p class="pillar-areas-label">Potential Areas</p>
+          <ul class="pillar-areas-list">
+            <li>Football fundamentals</li>
+            <li>Game understanding</li>
+            <li>Teamwork</li>
+            <li>Communication</li>
+            <li>Discipline</li>
+            <li>Life skills</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="pillar-panel reveal">
+        <span class="pillar-index">02</span>
+        <h3 class="pillar-title">Relearn</h3>
+        <p class="pillar-statement">We relearn consistency, humility, and hard work.</p>
+        <p class="pillar-intro">Improvement requires repetition and commitment — returning to the fundamentals until they hold under pressure.</p>
+        <div class="pillar-areas">
+          <p class="pillar-areas-label">Potential Areas</p>
+          <ul class="pillar-areas-list">
+            <li>Consistency</li>
+            <li>Humility</li>
+            <li>Work ethic</li>
+            <li>Commitment</li>
+            <li>Responsibility</li>
+            <li>Continuous improvement</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="pillar-panel reveal">
+        <span class="pillar-index">03</span>
+        <h3 class="pillar-title">Unlearn</h3>
+        <p class="pillar-statement">We unlearn fear, excuses, and complacency.</p>
+        <p class="pillar-intro">Growth also means removing the habits and mindsets that hold a player back, even when they feel comfortable.</p>
+        <div class="pillar-areas">
+          <p class="pillar-areas-label">Potential Areas</p>
+          <ul class="pillar-areas-list">
+            <li>Fear of failure</li>
+            <li>Making excuses</li>
+            <li>Complacency</li>
+            <li>Giving up</li>
+            <li>Avoiding responsibility</li>
+            <li>Limiting yourself</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     THE LEARNERS DEVELOPMENT JOURNEY
+============================================ -->
+<section class="section section-dark" id="journey">
+  <div class="container">
+    <div class="section-head center reveal" style="margin-left:auto;margin-right:auto;">
+      <span class="eyebrow" style="color:var(--color-accent); justify-content:center;">Conceptual Model</span>
+      <h2 class="section-title">The Learners Development Journey</h2>
+      <p class="section-sub">A simple way of understanding how development unfolds at Learners FC — not a fixed program, but the journey this website is built around.</p>
+    </div>
+
+    <div class="journey-vertical">
+      <div class="journey-v-step reveal">
+        <div class="journey-v-num">1</div>
+        <h3 class="journey-v-title">Foundation</h3>
+        <p class="journey-v-text">The basic technical and physical building blocks every player starts from.</p>
+      </div>
+      <div class="journey-v-step reveal">
+        <div class="journey-v-num">2</div>
+        <h3 class="journey-v-title">Learning</h3>
+        <p class="journey-v-text">Taking in new skills, ideas and habits — on the ball and off it.</p>
+      </div>
+      <div class="journey-v-step reveal">
+        <div class="journey-v-num">3</div>
+        <h3 class="journey-v-title">Practice</h3>
+        <p class="journey-v-text">Repeating what's been learned until it becomes natural.</p>
+      </div>
+      <div class="journey-v-step reveal">
+        <div class="journey-v-num">4</div>
+        <h3 class="journey-v-title">Reflection</h3>
+        <p class="journey-v-text">Reviewing what worked, what didn't, and why.</p>
+      </div>
+      <div class="journey-v-step reveal">
+        <div class="journey-v-num">5</div>
+        <h3 class="journey-v-title">Adaptation</h3>
+        <p class="journey-v-text">Adjusting and applying lessons in new situations.</p>
+      </div>
+      <div class="journey-v-step reveal">
+        <div class="journey-v-num">6</div>
+        <h3 class="journey-v-title">Competition</h3>
+        <p class="journey-v-text">Testing everything learned under real pressure.</p>
+      </div>
+      <div class="journey-v-step reveal">
+        <div class="journey-v-num">7</div>
+        <h3 class="journey-v-title">Growth</h3>
+        <p class="journey-v-text">Carrying it all forward, and beginning the cycle again.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     MORE THAN A FOOTBALLER
+============================================ -->
+<section class="section" id="whole-player">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Full Picture</span>
+      <h2 class="section-title">More Than A Footballer</h2>
+      <p class="section-sub">Player development at Learners FC spans several dimensions — not just technical ability.</p>
+    </div>
+
+    <div class="dimension-grid">
+      <div class="dimension-card reveal">
+        <h3 class="dimension-title">Technical</h3>
+        <p class="dimension-text">Ball control, passing, finishing and other football fundamentals.</p>
+      </div>
+      <div class="dimension-card reveal">
+        <h3 class="dimension-title">Tactical</h3>
+        <p class="dimension-text">Understanding the game, positioning, decision-making and teamwork.</p>
+      </div>
+      <div class="dimension-card reveal">
+        <h3 class="dimension-title">Physical</h3>
+        <p class="dimension-text">Fitness, movement, coordination and physical preparation.</p>
+      </div>
+      <div class="dimension-card reveal">
+        <h3 class="dimension-title">Mental</h3>
+        <p class="dimension-text">Confidence, resilience, focus and handling challenges.</p>
+      </div>
+      <div class="dimension-card reveal">
+        <h3 class="dimension-title">Character</h3>
+        <p class="dimension-text">Humility, discipline, responsibility and respect.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTBALL AND LIFE
+============================================ -->
+<section class="section section-alt" id="football-life">
+  <div class="container">
+    <div class="life-layout">
+      <div class="life-photo reveal">
+        <img src="../images/club/player-development.jpg" alt="Learners FC player development" loading="lazy"
+             onerror="this.parentElement.style.display='flex'; this.parentElement.style.alignItems='center'; this.parentElement.style.justifyContent='center'; this.style.display='none';">
+      </div>
+      <div class="reveal">
+        <span class="eyebrow">Beyond The Pitch</span>
+        <h2 class="section-title" style="margin-top:12px;">What We Learn On The Pitch, We Carry Into Life.</h2>
+        <p style="margin-top:20px; color:var(--color-text-muted); font-size:1.02rem;">Football has a way of teaching lessons faster and more honestly than almost anything else. The discipline, teamwork and resilience built in training and matches don't stay on the pitch — they follow our players everywhere else.</p>
+        <div class="life-list">
+          <div class="life-item"><span class="dot"></span>Discipline</div>
+          <div class="life-item"><span class="dot"></span>Teamwork</div>
+          <div class="life-item"><span class="dot"></span>Leadership</div>
+          <div class="life-item"><span class="dot"></span>Communication</div>
+          <div class="life-item"><span class="dot"></span>Resilience</div>
+          <div class="life-item"><span class="dot"></span>Accountability</div>
+          <div class="life-item"><span class="dot"></span>Respect</div>
+          <div class="life-item"><span class="dot"></span>Handling Failure</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FAILURE + CONSISTENCY
+============================================ -->
+<section class="section" id="failure-consistency">
+  <div class="container">
+    <div class="split-panels">
+      <div class="split-panel reveal">
+        <h3 class="split-panel-title">Failure Is Part Of Learning.</h3>
+        <p class="split-panel-text">Mistakes and setbacks aren't the opposite of progress — they're often where it actually happens. What matters is what comes next: taking responsibility, reflecting honestly, and trying again without losing humility.</p>
+        <div class="split-panel-list">
+          <span class="split-tag">Take Responsibility</span>
+          <span class="split-tag">Learn From Mistakes</span>
+          <span class="split-tag">Try Again</span>
+          <span class="split-tag">Stay Humble</span>
+        </div>
+      </div>
+
+      <div class="split-panel reveal">
+        <h3 class="split-panel-title">Growth Takes Consistency</h3>
+        <p class="split-panel-text">Real development is built through repeated effort, not occasional bursts of intensity. Small, consistent habits compound over time into real change.</p>
+        <div class="timeline-row">
+          <div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-label">Consistency</div>
+          </div>
+          <div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-label">Discipline</div>
+          </div>
+          <div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-label">Patience</div>
+          </div>
+          <div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-label">Hard Work</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     THE COACHING MINDSET
+============================================ -->
+<section class="section section-dark" id="coaching-mindset">
+  <div class="container">
+    <div class="coach-mindset">
+      <div class="reveal">
+        <span class="eyebrow" style="color:var(--color-accent)">Our Approach</span>
+        <h2 class="section-title" style="margin-top:12px;">The Coaching Mindset</h2>
+        <p class="section-sub" style="margin-top:18px;">Coaches at Learners FC aren't just there to tell players what to do. Their role is to help players understand the game, practice with purpose, reflect honestly, and keep improving — season after season.</p>
+      </div>
+
+      <div class="coach-mindset-placeholder reveal">
+        <p class="coach-mindset-placeholder-title">Coach's Message Coming Soon</p>
+        <p class="coach-mindset-placeholder-text">This space is reserved for the Head Coach's personal development philosophy, to be added once it has been provided by the club.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     DEVELOPMENT AREAS — TABS
+============================================ -->
+<section class="section" id="dev-areas">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow" style="justify-content:center;">Explore</span>
+      <h2 class="section-title">Development Areas</h2>
+      <p class="section-sub">Select a category to learn more about how it fits into player development at Learners FC.</p>
+    </div>
+
+    <div class="tabs-wrap reveal">
+      <div class="tab-list" role="tablist" aria-label="Development areas">
+        <button class="tab-btn is-active" data-tab="technical" role="tab" aria-selected="true">Technical</button>
+        <button class="tab-btn" data-tab="tactical" role="tab" aria-selected="false">Tactical</button>
+        <button class="tab-btn" data-tab="physical" role="tab" aria-selected="false">Physical</button>
+        <button class="tab-btn" data-tab="mental" role="tab" aria-selected="false">Mental</button>
+        <button class="tab-btn" data-tab="character" role="tab" aria-selected="false">Character</button>
+      </div>
+
+      <div class="tab-panel is-active" data-tab-panel="technical" role="tabpanel">
+        <h3 class="tab-panel-title">Technical</h3>
+        <p class="tab-panel-text">The core football skills every player builds on: ball control, passing, finishing, and the basic technical actions that make up the game. Technical ability gives players the tools to express everything else they learn.</p>
+      </div>
+      <div class="tab-panel" data-tab-panel="tactical" role="tabpanel">
+        <h3 class="tab-panel-title">Tactical</h3>
+        <p class="tab-panel-text">Understanding the game itself — positioning, decision-making, and how to work as part of a team rather than as an individual. Tactical awareness turns technical ability into effective play.</p>
+      </div>
+      <div class="tab-panel" data-tab-panel="physical" role="tabpanel">
+        <h3 class="tab-panel-title">Physical</h3>
+        <p class="tab-panel-text">Fitness, movement and coordination form the physical base that supports everything a player does on the pitch. Physical preparation is treated as a long-term, age-appropriate process.</p>
+      </div>
+      <div class="tab-panel" data-tab-panel="mental" role="tabpanel">
+        <h3 class="tab-panel-title">Mental</h3>
+        <p class="tab-panel-text">Confidence, resilience and focus shape how a player responds to pressure, setbacks and big moments. The mental side of the game is treated as seriously as the physical side.</p>
+      </div>
+      <div class="tab-panel" data-tab-panel="character" role="tabpanel">
+        <h3 class="tab-panel-title">Character</h3>
+        <p class="tab-panel-text">Humility, discipline, responsibility and respect are the qualities Learners FC values most — the ones that carry a player's growth beyond football entirely.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     PLAYER DEVELOPMENT CTA
+============================================ -->
+<section class="section section-alt" id="cta">
+  <div class="container">
+    <div class="cta reveal">
+      <div class="cta-inner">
+        <h2 class="cta-title">Every Player Is A Learner.</h2>
+        <p class="cta-text">There is always something to learn, something to improve, and something to overcome.</p>
+        <div class="cta-actions">
+          <a href="team.html" class="btn btn-primary">Meet The Team</a>
+          <a href="about.html" class="btn btn-outline">Our Story</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTER
+============================================ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="brand">
+          <span class="brand-mark">LFC</span>
+          <span class="brand-name">Learners FC</span>
+        </a>
+        <p class="footer-statement">Preparing the next generation to be ready for anything — on the pitch and in life.</p>
+        <p class="footer-philosophy">Learn. Relearn. Unlearn.</p>
+        <div class="social-row" aria-label="Social media links">
+          <a href="#" class="social-icon" aria-label="Facebook">f</a>
+          <a href="#" class="social-icon" aria-label="Instagram">ig</a>
+          <a href="#" class="social-icon" aria-label="X / Twitter">x</a>
+          <a href="#" class="social-icon" aria-label="YouTube">yt</a>
+        </div>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="team.html">Team</a></li>
+          <li><a href="fixtures.html">Fixtures</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav">
+        <h3 class="footer-heading">More</h3>
+        <ul class="footer-links">
+          <li><a href="news.html">News</a></li>
+          <li><a href="media.html">Media</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact-wrap">
+        <h3 class="footer-heading">Contact</h3>
+        <ul class="footer-contact">
+          <li>Address — Placeholder</li>
+          <li>Phone — Placeholder</li>
+          <li>Email — Placeholder</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Learners FC. All rights reserved.</span>
+      <span>Learn. Relearn. Unlearn.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    "use strict";
+
+    /* 1. Mobile navigation toggle */
+    var navToggle = document.getElementById('navToggle');
+    var navLinks  = document.getElementById('navLinks');
+
+    navToggle.addEventListener('click', function(){
+      var isOpen = navLinks.classList.toggle('is-open');
+      navToggle.classList.toggle('is-open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    navLinks.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click', function(){
+        navLinks.classList.remove('is-open');
+        navToggle.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* 2. Dynamic copyright year */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* 3. Smooth scroll for in-page anchors */
+    document.querySelectorAll('a[href^="#"]').forEach(function(link){
+      link.addEventListener('click', function(e){
+        var targetId = link.getAttribute('href');
+        if(targetId.length > 1 && document.querySelector(targetId)){
+          e.preventDefault();
+          document.querySelector(targetId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    /* 4. Scroll-reveal animations */
+    var revealEls = document.querySelectorAll('.reveal');
+    if('IntersectionObserver' in window){
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
+
+      revealEls.forEach(function(el){ observer.observe(el); });
+    } else {
+      revealEls.forEach(function(el){ el.classList.add('is-visible'); });
+    }
+
+    /* 5. Header background strengthens on scroll */
+    var header = document.querySelector('.site-header');
+    var onScroll = function(){
+      header.style.background = window.scrollY > 40 ? 'rgba(8,28,20,0.97)' : 'rgba(14,42,31,0.92)';
+    };
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+
+    /* 6. Development area tabs */
+    var tabButtons = document.querySelectorAll('.tab-btn');
+    var tabPanels  = document.querySelectorAll('.tab-panel');
+
+    tabButtons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var target = btn.getAttribute('data-tab');
+
+        tabButtons.forEach(function(b){
+          b.classList.remove('is-active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-selected', 'true');
+
+        tabPanels.forEach(function(panel){
+          panel.classList.toggle('is-active', panel.getAttribute('data-tab-panel') === target);
+        });
+      });
+    });
+
+  })();
+</script>
+
+</body>
+</html>
