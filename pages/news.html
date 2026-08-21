@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/jpeg" href="../assets/club/logo.jpeg">
 <title>News — Learners FC</title>
 <meta name="description" content="The latest updates, stories and match reports from Learners FC — follow the journey, one lesson at a time.">
 
@@ -99,7 +100,9 @@
     width:42px; height:42px; border-radius:50%; border:2px solid var(--color-accent);
     display:flex; align-items:center; justify-content:center;
     font-family:var(--font-display); font-size:0.95rem; color:var(--color-accent); flex-shrink:0;
+    overflow:hidden;
   }
+  .brand-mark img{ width:100%; height:100%; object-fit:cover; }
   .brand-name{ font-family:var(--font-display); font-size:1.05rem; letter-spacing:0.06em; text-transform:uppercase; line-height:1.1; }
   .brand-name span{ display:block; font-family:var(--font-body); font-weight:400; font-size:0.62rem; letter-spacing:0.22em; color:var(--color-accent); margin-top:2px; }
 
@@ -161,8 +164,10 @@
     aspect-ratio:4/3;
     background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary));
     position:relative;
+    display:flex; align-items:center; justify-content:center;
   }
   .featured-photo img{ width:100%; height:100%; object-fit:cover; }
+  .featured-photo.is-logo img{ width:55%; height:55%; object-fit:contain; }
   .featured-body{ padding:44px; display:flex; flex-direction:column; justify-content:center; }
   .featured-meta{ display:flex; gap:12px; align-items:center; }
   .cat-pill{
@@ -176,7 +181,15 @@
     margin-top:24px; display:inline-flex; align-items:center; gap:8px;
     font-size:0.82rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;
     color:var(--color-primary); border-bottom:2px solid var(--color-accent); padding-bottom:2px; width:fit-content;
+    background:none; border-top:none; border-left:none; border-right:none;
   }
+
+  /* Read more / read less expandable story body */
+  .story-full{ margin-top:16px; padding-top:16px; border-top:1px solid var(--color-line); }
+  .story-full p{ margin-top:12px; }
+  .story-full p:first-child{ margin-top:0; }
+  .featured-body .story-full{ font-size:0.98rem; color:var(--color-text-muted); }
+  .news-body .story-full{ font-size:0.88rem; color:var(--color-text-muted); }
 
   /* ============================================
      SEARCH + FILTERS
@@ -242,6 +255,7 @@
     margin-top:16px; display:inline-flex; align-items:center; gap:8px;
     font-size:0.8rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;
     color:var(--color-primary); border-bottom:2px solid var(--color-accent); padding-bottom:2px;
+    background:none; border-top:none; border-left:none; border-right:none;
   }
 
   .load-more-wrap{ text-align:center; margin-top:44px; }
@@ -271,6 +285,8 @@
   .match-report-score{ font-family:var(--font-display); font-size:1.6rem; text-transform:uppercase; margin-top:16px; color:#B9C4BC; }
   .match-report-title{ margin-top:18px; font-size:1.3rem; text-transform:uppercase; line-height:1.2; }
   .match-report-meta{ margin-top:14px; font-size:0.88rem; color:#B9C4BC; }
+  .match-report-text{ margin-top:20px; font-size:0.92rem; color:#C7D3CC; }
+  .match-report-text p + p{ margin-top:12px; }
 
   /* ============================================
      DEVELOPMENT STORIES
@@ -379,7 +395,7 @@
 <header class="site-header">
   <div class="container nav">
     <a href="../index.html" class="brand">
-      <span class="brand-mark">LFC</span>
+      <span class="brand-mark"><img src="../assets/club/logo.jpeg" alt="Learners FC crest" onerror="this.parentElement.textContent='LFC';"></span>
       <span class="brand-name">Learners FC<span>Learn · Relearn · Unlearn</span></span>
     </a>
 
@@ -425,8 +441,8 @@
     </div>
 
     <article class="featured-story reveal">
-      <div class="featured-photo">
-        <img src="../images/news/featured.jpg" alt="The Learners FC Journey Begins" loading="lazy"
+      <div class="featured-photo is-logo">
+        <img src="../assets/club/logo.jpeg" alt="Learners FC Logo" loading="lazy"
              onerror="this.style.display='none';">
       </div>
       <div class="featured-body">
@@ -436,7 +452,14 @@
         </div>
         <h3 class="featured-title">The Learners FC Journey Begins</h3>
         <p class="featured-excerpt">Learners FC is officially underway — built on a simple idea: learn the fundamentals, relearn the habits that matter, and unlearn everything that holds a player back. This is a placeholder story marking the start of the club's news coverage; real updates will replace it here.</p>
-        <a href="#" class="featured-link">Read More →</a>
+
+        <div class="story-full" id="story-featured" hidden>
+          <p>The badge is new, but the idea behind it is not. Learners FC was formed around a simple belief: that every player, no matter how talented, is still a student of the game. That philosophy — Learn, Relearn, Unlearn — now shapes everything the club does, from the first five minutes of training to the way matches are reviewed afterwards.</p>
+          <p>Over the coming weeks, the club will begin sharing regular updates: training milestones, player introductions, and eventually match reports once the competitive season gets underway. The goal is simple — to give supporters, parents and the wider community a real window into how the club is being built, not just the results it eventually produces.</p>
+          <p>For now, the focus remains on the fundamentals: organised sessions, consistent habits, and a squad that is learning to work as one unit. Everything else — silverware, rankings, reputation — is expected to follow from getting those basics right.</p>
+        </div>
+
+        <a href="#" class="featured-link read-toggle" data-target="story-featured">Read More →</a>
       </div>
     </article>
   </div>
@@ -475,7 +498,11 @@
           <div class="news-meta"><span>Training</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
           <h3 class="news-title">First Training Session</h3>
           <p class="news-excerpt">A look at what the club's earliest sessions are built around — fundamentals, structure and setting the tone for everything that follows.</p>
-          <a href="#" class="news-link">Read More →</a>
+          <div class="story-full" id="story-01" hidden>
+            <p>Session one was less about drills and more about establishing standards — arrival time, warm-up routine, how the group communicates on the ball. Coaches spent as much time on habits as on technique, reinforcing the idea that discipline off the ball is what makes good football possible.</p>
+            <p>Small-sided games closed the session, giving coaches an early look at how players naturally organise themselves in space. Those observations will shape how training is structured over the coming weeks.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-01">Read More →</a>
         </div>
       </article>
 
@@ -485,7 +512,11 @@
           <div class="news-meta"><span>Players</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
           <h3 class="news-title">Meet The Learners</h3>
           <p class="news-excerpt">An introduction to the people behind the squad, and what it means to wear the Learners FC badge.</p>
-          <a href="#" class="news-link">Read More →</a>
+          <div class="story-full" id="story-02" hidden>
+            <p>Every squad has a story, and this one is still being written. The group brought together to form Learners FC comes from different backgrounds and experience levels, united by a shared willingness to be coached.</p>
+            <p>Individual player profiles will be published here over the coming weeks, giving supporters a proper introduction to the squad before the first competitive fixtures begin.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-02">Read More →</a>
         </div>
       </article>
 
@@ -495,7 +526,11 @@
           <div class="news-meta"><span>Club</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
           <h3 class="news-title">Coach's Philosophy</h3>
           <p class="news-excerpt">A first look at the thinking behind Learn, Relearn, Unlearn, and how it shapes daily life at the club.</p>
-          <a href="#" class="news-link">Read More →</a>
+          <div class="story-full" id="story-03" hidden>
+            <p>"Learn" means mastering the fundamentals properly the first time. "Relearn" means revisiting those fundamentals under pressure, in matches, when the easy version of a skill breaks down. "Unlearn" is the hardest part — letting go of shortcuts and bad habits picked up before joining the club.</p>
+            <p>That three-part philosophy now sits behind every training plan, every substitution, and every post-match conversation at Learners FC.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-03">Read More →</a>
         </div>
       </article>
 
@@ -505,7 +540,10 @@
           <div class="news-meta"><span>Development</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
           <h3 class="news-title">Preparing For Competition</h3>
           <p class="news-excerpt">How Learners FC approaches getting a young squad ready for its first taste of competitive football.</p>
-          <a href="#" class="news-link">Read More →</a>
+          <div class="story-full" id="story-04" hidden>
+            <p>Competitive readiness isn't only physical. Alongside conditioning work, sessions now include scenario-based coaching — game states, set-piece routines, and decision-making under time pressure — to prepare the squad for situations they haven't yet faced in a real match.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-04">Read More →</a>
         </div>
       </article>
 
@@ -515,7 +553,10 @@
           <div class="news-meta"><span>Players</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
           <h3 class="news-title">Player Development</h3>
           <p class="news-excerpt">Why every player at Learners FC is treated as a work in progress, and why that's exactly the point.</p>
-          <a href="#" class="news-link">Read More →</a>
+          <div class="story-full" id="story-05" hidden>
+            <p>No player at Learners FC is treated as a finished product — not even the most experienced ones. Individual development plans are being built for every squad member, tracking technical, physical and mental progress across the season.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-05">Read More →</a>
         </div>
       </article>
 
@@ -525,7 +566,10 @@
           <div class="news-meta"><span>Matches</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
           <h3 class="news-title">Match Report</h3>
           <p class="news-excerpt">Full match reports will appear here as soon as Learners FC's competitive fixtures begin.</p>
-          <a href="#" class="news-link">Read More →</a>
+          <div class="story-full" id="story-06" hidden>
+            <p>Once the fixture list is confirmed, this space will carry a full write-up after every matchday — goals, key moments, and a look ahead to the next opponent. Check back after the first fixture for a complete report.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-06">Read More →</a>
         </div>
       </article>
 
@@ -535,7 +579,10 @@
           <div class="news-meta"><span>Club</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
           <h3 class="news-title">Building The Club</h3>
           <p class="news-excerpt">A behind-the-scenes look at what it takes to build a football club from the ground up.</p>
-          <a href="#" class="news-link">Read More →</a>
+          <div class="story-full" id="story-07" hidden>
+            <p>Long before a ball is kicked in competition, there's a foundation to lay — a pitch to secure, a squad to assemble, a coaching structure to put in place. This piece walks through that early groundwork, and the decisions that shaped how Learners FC is being run.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-07">Read More →</a>
         </div>
       </article>
 
@@ -545,7 +592,10 @@
           <div class="news-meta"><span>Training</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
           <h3 class="news-title">Inside A Training Week</h3>
           <p class="news-excerpt">A general look at how a training week is structured around the Learn, Relearn, Unlearn philosophy.</p>
-          <a href="#" class="news-link">Read More →</a>
+          <div class="story-full" id="story-08" hidden>
+            <p>Early-week sessions focus on technical fundamentals, midweek shifts toward tactical shape and pattern-of-play, and the final session before a match is kept light — sharp, short and focused on confidence rather than fatigue.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-08">Read More →</a>
         </div>
       </article>
 
@@ -555,7 +605,49 @@
           <div class="news-meta"><span>Development</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
           <h3 class="news-title">Humility In Football</h3>
           <p class="news-excerpt">Why staying coachable matters as much as raw talent in the Learners FC approach to development.</p>
-          <a href="#" class="news-link">Read More →</a>
+          <div class="story-full" id="story-09" hidden>
+            <p>Talent gets a player noticed; humility is what keeps them improving. Coaches at Learners FC deliberately reward players who respond well to correction, not just those who perform best in the moment — a small cultural signal that shapes how the whole squad trains.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-09">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="matches" data-title="Season Preview" data-excerpt="What to expect from Learners FC as the club heads toward its first competitive campaign.">
+        <div class="news-photo"><img src="../images/news/news-10.jpg" alt="Season Preview" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Matches</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Season Preview</h3>
+          <p class="news-excerpt">What to expect from Learners FC as the club heads toward its first competitive campaign.</p>
+          <div class="story-full" id="story-10" hidden>
+            <p>With pre-season work well underway, attention is starting to turn toward the fixture list. This preview covers what supporters can expect from the squad's first campaign, and what success looks like in year one.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-10">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="club" data-title="Club Colours Revealed" data-excerpt="The story behind the Learners FC crest and kit colours, and what they represent.">
+        <div class="news-photo"><img src="../images/news/news-11.jpg" alt="Club Colours Revealed" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Club</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Club Colours Revealed</h3>
+          <p class="news-excerpt">The story behind the Learners FC crest and kit colours, and what they represent.</p>
+          <div class="story-full" id="story-11" hidden>
+            <p>Every detail on the crest was chosen deliberately — from the deep green that anchors the club's identity to the gold trim that nods toward ambition. This piece breaks down the thinking behind the design.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-11">Read More →</a>
+        </div>
+      </article>
+
+      <article class="news-card" data-category="training" data-title="Fitness And Conditioning" data-excerpt="A look at the physical foundations being built before the competitive season starts.">
+        <div class="news-photo"><img src="../images/news/news-12.jpg" alt="Fitness And Conditioning" loading="lazy" onerror="this.parentElement.textContent='Image Coming Soon';"></div>
+        <div class="news-body">
+          <div class="news-meta"><span>Training</span><span class="dot"></span><span class="date">Date — Placeholder</span></div>
+          <h3 class="news-title">Fitness And Conditioning</h3>
+          <p class="news-excerpt">A look at the physical foundations being built before the competitive season starts.</p>
+          <div class="story-full" id="story-12" hidden>
+            <p>Conditioning work has ramped up over recent sessions, with an emphasis on match-specific fitness rather than generic endurance — repeated sprint ability, recovery between efforts, and the kind of intensity players will actually face on matchday.</p>
+          </div>
+          <a href="#" class="news-link read-toggle" data-target="story-12">Read More →</a>
         </div>
       </article>
 
@@ -582,14 +674,22 @@
       <h2 class="section-title">From The Pitch</h2>
     </div>
 
-    <!-- Learners FC has not yet played a competitive match, so this
-         section shows the required empty state. Once a match report is
-         ready, replace this block with a populated .match-report-card
-         (opponent, date, score and headline placeholders included below
-         for reference when building that card). -->
-    <div class="empty-state is-visible reveal">
-      <h3 class="empty-state-title">Match Reports Will Appear Here</h3>
-      <p class="empty-state-text">Follow Learners FC as the competitive journey begins.</p>
+    <!-- Sample match report — replace opponent, score and text once a
+         real fixture has been played. -->
+    <div class="match-report-card reveal">
+      <div class="match-report-photo"></div>
+      <div class="match-report-body">
+        <span class="eyebrow" style="color:var(--color-accent);">Friendly · Full Time</span>
+        <p class="match-report-score">Learners FC 2 – 1 Opponent FC</p>
+        <h3 class="match-report-title">A Hard-Fought Opening Win</h3>
+        <p class="match-report-meta">Friendly Fixture · Date — Placeholder · Malejor Community Pitch</p>
+        <div class="match-report-text">
+          <p>Learners FC came from behind to claim a 2–1 win in their first outing of the season, with the squad showing real composure after going a goal down inside the opening ten minutes.</p>
+          <p>A well-worked equaliser just before half-time settled the side, and a second-half winner — the product of a patient build-up rather than a moment of individual brilliance — summed up exactly the kind of football the club is trying to build.</p>
+          <p>Coaches were pleased with the response after falling behind, pointing to it as early evidence that the group's training habits are starting to show up in matches. Full player ratings and more detail will follow once the club's competitive fixtures are underway.</p>
+        </div>
+        <a href="#" class="btn btn-outline" style="margin-top:28px;">Full Match Report</a>
+      </div>
     </div>
   </div>
 </section>
@@ -663,17 +763,20 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="../index.html" class="brand">
-          <span class="brand-mark">LFC</span>
+          <span class="brand-mark"><img src="../assets/club/logo.jpeg" alt="Learners FC crest" onerror="this.parentElement.textContent='LFC';"></span>
           <span class="brand-name">Learners FC</span>
         </a>
         <p class="footer-statement">Preparing the next generation to be ready for anything — on the pitch and in life.</p>
         <p class="footer-philosophy">Learn. Relearn. Unlearn.</p>
         <div class="social-row" aria-label="Social media links">
-          <a href="#" class="social-icon" aria-label="Facebook">f</a>
-          <a href="#" class="social-icon" aria-label="Instagram">ig</a>
-          <a href="#" class="social-icon" aria-label="X / Twitter">x</a>
-          <a href="#" class="social-icon" aria-label="YouTube">yt</a>
-        </div>
+  <a href="https://www.facebook.com/share/18cJdfzD5d/" class="social-icon" aria-label="Facebook" target="_blank">f</a>
+  
+  <a href="https://www.tiktok.com/@leanersfc?_r=1&_t=ZS-98yEqGBlTID" class="social-icon" aria-label="TikTok" target="_blank">tk</a>
+  
+  <span class="social-icon coming-soon" aria-label="Instagram Coming Soon" role="link" aria-disabled="true">ig</span>
+  
+  <span class="social-icon coming-soon" aria-label="YouTube Coming Soon" role="link" aria-disabled="true">yt</span>
+</div>
       </div>
 
       <div class="footer-nav">
@@ -699,10 +802,10 @@
       <div class="footer-contact-wrap">
         <h3 class="footer-heading">Contact</h3>
         <ul class="footer-contact">
-          <li>Address — Placeholder</li>
-          <li>Phone — Placeholder</li>
-          <li>Email — Placeholder</li>
-        </ul>
+  <li><i class="fas fa-map-marker-alt"></i> Malejor, Adenta-Dodowa Road</li>
+  <li><i class="fas fa-phone"></i> <a href="tel:+233545239630">+233 54 523 9630</a></li>
+  <li><i class="fas fa-envelope"></i> <a href="mailto:Learnersfootballclub@gmail.com">Learnersfootballclub@gmail.com</a></li>
+</ul>
       </div>
     </div>
 
@@ -839,6 +942,24 @@
     });
 
     render();
+
+    /* 7. Read More / Read Less toggles (featured story + news cards) */
+    document.querySelectorAll('.read-toggle').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        var target = document.getElementById(btn.getAttribute('data-target'));
+        if(!target) return;
+
+        var currentlyHidden = target.hasAttribute('hidden');
+        if(currentlyHidden){
+          target.removeAttribute('hidden');
+          btn.textContent = 'Read Less ↑';
+        } else {
+          target.setAttribute('hidden', '');
+          btn.textContent = 'Read More →';
+        }
+      });
+    });
 
   })();
 </script>
