@@ -303,20 +303,29 @@
   }
   .faq-answer-inner{ padding:0 4px 26px; max-width:70ch; color:var(--color-text-muted); font-size:0.96rem; }
 
-  /* ============================================
+   /* ============================================
      8. LOCATION
   ============================================ */
   .location-panel{
-    background:var(--color-bg-alt); border:1px dashed var(--color-line); border-radius:var(--radius);
-    padding:64px 40px; text-align:center;
+    display:grid; grid-template-columns:1.3fr 1fr; gap:32px; align-items:stretch;
+    background:var(--color-white); border:1px solid var(--color-line);
+    border-radius:var(--radius); overflow:hidden; text-align:left;
   }
+  .location-map{ min-height:320px; min-width:0; }
+  .location-details{ padding:36px 36px 36px 0; display:flex; flex-direction:column; justify-content:center; min-width:0; }
+
   .location-icon{
-    width:56px; height:56px; margin:0 auto; border-radius:50%; border:2px solid var(--color-accent);
+    width:56px; height:56px; border-radius:50%; border:2px solid var(--color-accent);
     display:flex; align-items:center; justify-content:center; color:var(--color-accent);
   }
   .location-icon svg{ width:24px; height:24px; }
   .location-title{ margin-top:22px; font-size:1.2rem; text-transform:uppercase; }
-  .location-text{ margin-top:10px; color:var(--color-text-muted); max-width:44ch; margin-left:auto; margin-right:auto; }
+
+  @media (max-width:760px){
+    .location-panel{ grid-template-columns:1fr; }
+    .location-map{ min-height:260px; }
+    .location-details{ padding:28px; }
+  }
 
   /* ============================================
      9. FINAL CTA
@@ -472,7 +481,7 @@
     <div class="section-head reveal">
       <span class="eyebrow">Reach Us</span>
       <h2 class="section-title">Contact Information</h2>
-      <p class="section-sub">Official contact details are being finalised. The placeholders below will be updated once confirmed.</p>
+      <p class="section-sub">Here's how to reach Learners FC directly.</p>
     </div>
 
     <div class="info-grid">
@@ -481,8 +490,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         </span>
         <p class="info-label">Phone</p>
-        <p class="info-value">+233 XX XXX XXXX</p>
-        <p class="info-note">Placeholder — official number coming soon</p>
+        <p class="info-value"><a href="tel:+233545239630">+233 54 523 9630</a></p>
       </article>
 
       <article class="info-card reveal">
@@ -491,7 +499,6 @@
         </span>
         <p class="info-label">Email</p>
         <p class="info-value"><a href="mailto:Learnersfootballclub@gmail.com">Learnersfootballclub@gmail.com</a></p>
-        <p class="info-note">Placeholder — for demonstration purposes</p>
       </article>
 
       <article class="info-card reveal">
@@ -499,8 +506,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         </span>
         <p class="info-label">Location</p>
-        <p class="info-value">Location coming soon</p>
-        <p class="info-note">Training/club location to be confirmed</p>
+        <p class="info-value">Malejor, Adenta-Dodowa Road</p>
       </article>
 
       <article class="info-card reveal">
@@ -508,12 +514,11 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         </span>
         <p class="info-label">Follow Learners FC</p>
-        <p class="info-note" style="margin-top:8px;">Official accounts coming soon</p>
-        <div class="info-socials" aria-label="Social media placeholders">
-          <a href="#" class="social-icon" aria-label="Instagram (coming soon)">ig</a>
-          <a href="#" class="social-icon" aria-label="Facebook (coming soon)">f</a>
-          <a href="#" class="social-icon" aria-label="TikTok (coming soon)">tt</a>
-          <a href="#" class="social-icon" aria-label="YouTube (coming soon)">yt</a>
+        <div class="info-socials" aria-label="Social media links">
+          <a href="https://www.facebook.com/share/18cJdfzD5d/" class="social-icon" aria-label="Facebook" target="_blank">f</a>
+          <a href="https://www.tiktok.com/@leanersfc?_r=1&_t=ZS-98yEqGBlTID" class="social-icon" aria-label="TikTok" target="_blank">tk</a>
+          <span class="social-icon coming-soon" aria-label="Instagram Coming Soon" role="link" aria-disabled="true">ig</span>
+          <span class="social-icon coming-soon" aria-label="YouTube Coming Soon" role="link" aria-disabled="true">yt</span>
         </div>
       </article>
     </div>
@@ -532,17 +537,24 @@
     </div>
 
     <div class="form-wrap reveal">
-      <form id="contactForm" novalidate>
+      <form id="contactForm" novalidate action="https://formsubmit.co/Learnersfootballclub@gmail.com" method="POST">
+
+        <!-- FormSubmit configuration -->
+        <input type="hidden" name="_subject" value="New Enquiry — Learners FC Website">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
         <div class="form-grid">
           <div class="form-field full" id="field-name" data-invalid="false">
             <label for="fullName">Full Name <span class="required">*</span></label>
-            <input type="text" id="fullName" name="fullName" autocomplete="name" aria-required="true" aria-describedby="error-name">
+            <input type="text" id="fullName" name="fullName" autocomplete="name" aria-required="true" aria-describedby="error-name" required>
             <span class="field-error" id="error-name" role="alert">Please enter your full name.</span>
           </div>
 
           <div class="form-field" id="field-email" data-invalid="false">
             <label for="email">Email Address <span class="required">*</span></label>
-            <input type="email" id="email" name="email" autocomplete="email" aria-required="true" aria-describedby="error-email">
+            <input type="email" id="email" name="email" autocomplete="email" aria-required="true" aria-describedby="error-email" required>
             <span class="field-error" id="error-email" role="alert">Please enter a valid email address.</span>
           </div>
 
@@ -554,7 +566,7 @@
 
           <div class="form-field full" id="field-type" data-invalid="false">
             <label for="enquiryType">Enquiry Type <span class="required">*</span></label>
-            <select id="enquiryType" name="enquiryType" aria-required="true" aria-describedby="error-type">
+            <select id="enquiryType" name="enquiryType" aria-required="true" aria-describedby="error-type" required>
               <option value="" selected disabled>Select an enquiry type</option>
               <option value="general">General Enquiry</option>
               <option value="trial">Player / Trial</option>
@@ -569,20 +581,18 @@
 
           <div class="form-field full" id="field-message" data-invalid="false">
             <label for="message">Message <span class="required">*</span></label>
-            <textarea id="message" name="message" aria-required="true" aria-describedby="error-message"></textarea>
+            <textarea id="message" name="message" aria-required="true" aria-describedby="error-message" required></textarea>
             <span class="field-error" id="error-message" role="alert">Please enter a message.</span>
           </div>
         </div>
 
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Send Message</button>
-          <p class="form-disclaimer">This is a frontend demonstration. No message is sent until a backend or form service is connected.</p>
         </div>
 
         <div class="form-status" id="formStatus" role="status" aria-live="polite">
           <p class="form-status-title" id="formStatusTitle">Thank You</p>
-          <p class="form-status-text" id="formStatusText">Your message has been prepared successfully. Learners FC will be in touch once the contact system is connected.</p>
-          <p class="form-status-note">Frontend demonstration only — no email has actually been sent.</p>
+          <p class="form-status-text" id="formStatusText">Your message has been sent to Learners FC. We'll be in touch soon.</p>
         </div>
       </form>
     </div>
@@ -707,15 +717,28 @@
       <h2 class="section-title">Find Us</h2>
     </div>
     <div class="location-panel reveal">
-      <span class="location-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      </span>
-      <p class="location-title">Location Information Coming Soon</p>
-      <p class="location-text">A map will be added here once Learners FC's official training or club location is confirmed.</p>
+      <div class="location-map">
+        <iframe
+          src="https://www.google.com/maps?q=Malejor+School+Junction,+Adenta-Dodowa+Road,+Ghana&output=embed"
+          width="100%"
+          height="100%"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Learners FC Location — Malejor School Junction, Adenta-Dodowa Road">
+        </iframe>
+      </div>
+      <div class="location-details">
+        <span class="location-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </span>
+        <p class="location-title">Malejor School Junction, Adenta-Dodowa Road</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=Malejor+School+Junction,+Adenta-Dodowa+Road,+Ghana" target="_blank" rel="noopener" class="btn btn-outline-dark" style="margin-top:16px;">Get Directions</a>
+      </div>
     </div>
   </div>
 </section>
-
 <!-- ============================================
      FINAL CTA
 ============================================ -->

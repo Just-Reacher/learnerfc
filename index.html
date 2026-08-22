@@ -523,6 +523,38 @@
     letter-spacing:0.08em;
   }
   .news-photo img{ width:100%; height:100%; object-fit:cover; }
+  .news-photo img{ width:100%; height:100%; object-fit:cover; object-position:center top; }
+
+/* Logo/mark images shouldn't be cropped — show them whole, centered */
+.news-photo.is-logo{
+  background:var(--color-white);
+}
+.news-photo.is-logo img{
+  width:auto; height:auto;
+  max-width:60%; max-height:60%;
+  object-fit:contain;
+  object-position:center;
+}
+
+.news-photo{
+  aspect-ratio:16/10;
+  background:linear-gradient(155deg, #dfe4dc, #c9d1c5);
+  display:flex; align-items:center; justify-content:center;
+  color:#8a948a;
+  font-size:0.8rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+}
+
+/* Portrait source photos — taller box so nothing gets cropped out */
+.news-photo.is-portrait{
+  aspect-ratio:4/5;
+}
+
+.news-photo.is-logo{
+  aspect-ratio:4/5;   /* match .is-portrait instead of the default 16/10 */
+  background:var(--color-white);
+}
   .news-body{ padding:22px 22px 26px; }
   .news-meta{
     display:flex; gap:12px; align-items:center;
@@ -555,6 +587,39 @@
     border-bottom:2px solid var(--color-accent);
     padding-bottom:2px;
   }
+
+  .news-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:24px;
+  align-items:stretch;
+}
+.news-card{
+  display:flex;
+  flex-direction:column;
+}
+.news-body{
+  padding:22px 22px 26px;
+  display:flex;
+  flex-direction:column;
+  flex:1;
+}
+.news-link{
+  margin-top:16px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.8rem;
+  font-weight:700;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  color:var(--color-primary);
+  border-bottom:2px solid var(--color-accent);
+  padding-bottom:2px;
+  align-self:flex-start;
+  margin-top:auto;   /* pins the link to the bottom of the card */
+  padding-top:16px;
+}
 
   /* ============================================
      8. MEDIA GALLERY
@@ -991,9 +1056,9 @@
 
     <div class="news-grid">
       <article class="news-card reveal">
-        <div class="news-photo">
-          <img src="assets/news/news-01.png" alt="Learners FC logo" loading="lazy">
-        </div>
+        <div class="news-photo is-logo">
+  <img src="assets/news/news-01.png" alt="Learners FC logo" loading="lazy">
+</div>
         <div class="news-body">
           <div class="news-meta"><span>Club News</span><span class="dot"></span><span class="date">August 21, 2026</span></div>
           <h3 class="news-title">Welcome to Learners FC</h3>
@@ -1003,9 +1068,9 @@
       </article>
 
       <article class="news-card reveal">
-        <div class="news-photo">
-          <img src="assets/news/news-02.jpg" alt="Jersey donation from Chairman Ing. Janis Asare Bediako" loading="lazy">
-        </div>
+        <div class="news-photo is-portrait">
+  <img src="assets/news/news-02.jpg" alt="Jersey donation from Chairman Ing. Janis Asare Bediako" loading="lazy">
+</div>
         <div class="news-body">
           <div class="news-meta"><span>Club News</span><span class="dot"></span><span class="date">August 21, 2026</span></div>
           <h3 class="news-title">Learners FC Receives Jersey Donation from Chairman Ing. Janis Asare Bediako</h3>
@@ -1015,9 +1080,9 @@
       </article>
 
       <article class="news-card reveal">
-        <div class="news-photo">
-          <img src="assets/news/news-03.jpg" alt="Young player starts training" loading="lazy">
-        </div>
+        <div class="news-photo is-portrait">
+  <img src="assets/news/news-04.jpg" alt="Young player starts training" loading="lazy">
+</div>
         <div class="news-body">
           <div class="news-meta"><span>Club News</span><span class="dot"></span><span class="date">August 21, 2026</span></div>
           <h3 class="news-title">Our Newest Star Begins Training</h3>
