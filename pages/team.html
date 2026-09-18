@@ -179,6 +179,9 @@
     transition:transform var(--transition), box-shadow var(--transition);
   }
   .player-card:hover{ transform:translateY(-6px); box-shadow:0 18px 32px rgba(14,42,31,0.12); }
+  .player-photo-btn{
+    display:block; width:100%; padding:0; margin:0; border:0; background:none; text-align:left;
+  }
   .player-photo{
     aspect-ratio:3/4;
     background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary));
@@ -187,6 +190,7 @@
     display:flex; align-items:center; justify-content:center;
     color:rgba(255,255,255,0.5);
     font-family:var(--font-display);
+    cursor:pointer;
   }
   .player-photo img{ width:100%; height:100%; object-fit:cover; transition:transform 450ms ease; }
   .player-card:hover .player-photo img{ transform:scale(1.06); }
@@ -205,6 +209,10 @@
     padding-bottom:18px;
     opacity:0;
     transition:opacity var(--transition);
+  }
+  .player-overlay-label{
+    color:var(--color-white); font-size:0.72rem; font-weight:700;
+    letter-spacing:0.08em; text-transform:uppercase;
   }
   .player-card:hover .player-overlay{ opacity:1; }
   .player-info{ padding:16px 18px 20px; }
@@ -241,17 +249,27 @@
     transition:transform var(--transition), box-shadow var(--transition);
   }
   .staff-card:hover{ transform:translateY(-5px); box-shadow:0 14px 26px rgba(14,42,31,0.1); }
+  .staff-photo-btn{
+    display:block; width:96px; height:96px; margin:0 auto 18px; padding:0; border:0; background:none;
+  }
   .staff-photo{
-    width:96px; height:96px; margin:0 auto 18px; border-radius:50%;
+    width:96px; height:96px; border-radius:50%;
     background:linear-gradient(155deg, var(--color-primary-light), var(--color-primary));
     display:flex; align-items:center; justify-content:center;
     color:rgba(255,255,255,0.55); font-family:var(--font-display); font-size:1.4rem;
-    overflow:hidden;
+    overflow:hidden; cursor:pointer;
   }
   .staff-photo img{ width:100%; height:100%; object-fit:cover; }
   .staff-name{ font-size:1.02rem; text-transform:uppercase; letter-spacing:0.02em; color:var(--color-primary); }
   .staff-role{ margin-top:4px; font-size:0.78rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--color-accent); }
   .staff-bio{ margin-top:14px; font-size:0.88rem; color:var(--color-text-muted); }
+  .staff-bio-toggle{
+    display:inline-block; margin-top:8px; border:0; background:none; padding:0;
+    font-size:0.8rem; font-weight:700; color:var(--color-primary); text-decoration:underline;
+  }
+  .staff-link{
+    display:inline-block; margin-top:14px; font-size:0.8rem; font-weight:700; color:var(--color-primary);
+  }
 
   /* ============================================
      COACH FEATURE
@@ -338,6 +356,25 @@
     margin-top:56px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
     font-size:0.82rem; color:#7E8B83;
+  }
+
+  /* ============================================
+     LIGHTBOX
+  ============================================ */
+  .lightbox-overlay{
+    position:fixed; inset:0; background:rgba(8,28,20,0.9);
+    display:flex; align-items:center; justify-content:center;
+    z-index:2000; padding:24px;
+  }
+  .lightbox-overlay[hidden]{ display:none; }
+  .lightbox-img{ max-width:92vw; max-height:88vh; border-radius:8px; }
+  .lightbox-caption{
+    position:absolute; bottom:28px; left:0; right:0; text-align:center;
+    color:var(--color-white); font-size:0.85rem; letter-spacing:0.04em;
+  }
+  .lightbox-close{
+    position:absolute; top:20px; right:28px;
+    font-size:2rem; color:var(--color-white); background:none; border:0; cursor:pointer; line-height:1;
   }
 
   /* ============================================
@@ -445,7 +482,7 @@
     <div class="section-head reveal">
       <span class="eyebrow">Squad List</span>
       <h2 class="section-title">The Squad</h2>
-      <p class="section-sub">Filter by position to browse the squad. Full player profiles are coming soon.</p>
+      <p class="section-sub">Filter by position to browse the squad. Player photos and full profiles are coming soon — tap any photo to view it larger.</p>
     </div>
 
     <div class="filter-row reveal" role="group" aria-label="Filter players by position">
@@ -459,13 +496,15 @@
     <div class="squad-grid reveal" id="squadGrid">
 
       <article class="player-card" data-position="goalkeeper">
-        <div class="player-photo">
-          <span class="player-num-badge">#00</span>
-          <img src="../images/players/player-01.jpg" alt="Learners FC player" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
-          <span class="fallback-num" style="display:none;">LFC</span>
-          <div class="player-overlay"></div>
-        </div>
+        <button class="player-photo-btn" type="button" data-lightbox-src="../images/players/player-01.jpg" data-lightbox-alt="Player Name" data-lightbox-caption="Player Name — Goalkeeper" aria-label="View photo of Player Name">
+          <div class="player-photo">
+            <span class="player-num-badge">#00</span>
+            <img src="../images/players/player-01.jpg" alt="Learners FC player" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+            <span class="fallback-num" style="display:none;">LFC</span>
+            <div class="player-overlay"><span class="player-overlay-label">View Photo</span></div>
+          </div>
+        </button>
         <div class="player-info">
           <h3 class="player-name">Player Name</h3>
           <div class="player-meta-row">
@@ -477,13 +516,15 @@
       </article>
 
       <article class="player-card" data-position="defender">
-        <div class="player-photo">
-          <span class="player-num-badge">#00</span>
-          <img src="../images/players/player-02.jpg" alt="Learners FC player" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
-          <span class="fallback-num" style="display:none;">LFC</span>
-          <div class="player-overlay"></div>
-        </div>
+        <button class="player-photo-btn" type="button" data-lightbox-src="../images/players/player-02.jpg" data-lightbox-alt="Player Name" data-lightbox-caption="Player Name — Defender" aria-label="View photo of Player Name">
+          <div class="player-photo">
+            <span class="player-num-badge">#00</span>
+            <img src="../images/players/player-02.jpg" alt="Learners FC player" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+            <span class="fallback-num" style="display:none;">LFC</span>
+            <div class="player-overlay"><span class="player-overlay-label">View Photo</span></div>
+          </div>
+        </button>
         <div class="player-info">
           <h3 class="player-name">Player Name</h3>
           <div class="player-meta-row">
@@ -495,13 +536,15 @@
       </article>
 
       <article class="player-card" data-position="defender">
-        <div class="player-photo">
-          <span class="player-num-badge">#00</span>
-          <img src="../images/players/player-03.jpg" alt="Learners FC player" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
-          <span class="fallback-num" style="display:none;">LFC</span>
-          <div class="player-overlay"></div>
-        </div>
+        <button class="player-photo-btn" type="button" data-lightbox-src="../images/players/player-03.jpg" data-lightbox-alt="Player Name" data-lightbox-caption="Player Name — Defender" aria-label="View photo of Player Name">
+          <div class="player-photo">
+            <span class="player-num-badge">#00</span>
+            <img src="../images/players/player-03.jpg" alt="Learners FC player" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+            <span class="fallback-num" style="display:none;">LFC</span>
+            <div class="player-overlay"><span class="player-overlay-label">View Photo</span></div>
+          </div>
+        </button>
         <div class="player-info">
           <h3 class="player-name">Player Name</h3>
           <div class="player-meta-row">
@@ -513,13 +556,15 @@
       </article>
 
       <article class="player-card" data-position="midfielder">
-        <div class="player-photo">
-          <span class="player-num-badge">#00</span>
-          <img src="../images/players/player-04.jpg" alt="Learners FC player" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
-          <span class="fallback-num" style="display:none;">LFC</span>
-          <div class="player-overlay"></div>
-        </div>
+        <button class="player-photo-btn" type="button" data-lightbox-src="../images/players/player-04.jpg" data-lightbox-alt="Player Name" data-lightbox-caption="Player Name — Midfielder" aria-label="View photo of Player Name">
+          <div class="player-photo">
+            <span class="player-num-badge">#00</span>
+            <img src="../images/players/player-04.jpg" alt="Learners FC player" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+            <span class="fallback-num" style="display:none;">LFC</span>
+            <div class="player-overlay"><span class="player-overlay-label">View Photo</span></div>
+          </div>
+        </button>
         <div class="player-info">
           <h3 class="player-name">Player Name</h3>
           <div class="player-meta-row">
@@ -531,13 +576,15 @@
       </article>
 
       <article class="player-card" data-position="midfielder">
-        <div class="player-photo">
-          <span class="player-num-badge">#00</span>
-          <img src="../images/players/player-05.jpg" alt="Learners FC player" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
-          <span class="fallback-num" style="display:none;">LFC</span>
-          <div class="player-overlay"></div>
-        </div>
+        <button class="player-photo-btn" type="button" data-lightbox-src="../images/players/player-05.jpg" data-lightbox-alt="Player Name" data-lightbox-caption="Player Name — Midfielder" aria-label="View photo of Player Name">
+          <div class="player-photo">
+            <span class="player-num-badge">#00</span>
+            <img src="../images/players/player-05.jpg" alt="Learners FC player" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+            <span class="fallback-num" style="display:none;">LFC</span>
+            <div class="player-overlay"><span class="player-overlay-label">View Photo</span></div>
+          </div>
+        </button>
         <div class="player-info">
           <h3 class="player-name">Player Name</h3>
           <div class="player-meta-row">
@@ -549,13 +596,15 @@
       </article>
 
       <article class="player-card" data-position="forward">
-        <div class="player-photo">
-          <span class="player-num-badge">#00</span>
-          <img src="../images/players/player-06.jpg" alt="Learners FC player" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
-          <span class="fallback-num" style="display:none;">LFC</span>
-          <div class="player-overlay"></div>
-        </div>
+        <button class="player-photo-btn" type="button" data-lightbox-src="../images/players/player-06.jpg" data-lightbox-alt="Player Name" data-lightbox-caption="Player Name — Forward" aria-label="View photo of Player Name">
+          <div class="player-photo">
+            <span class="player-num-badge">#00</span>
+            <img src="../images/players/player-06.jpg" alt="Learners FC player" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+            <span class="fallback-num" style="display:none;">LFC</span>
+            <div class="player-overlay"><span class="player-overlay-label">View Photo</span></div>
+          </div>
+        </button>
         <div class="player-info">
           <h3 class="player-name">Player Name</h3>
           <div class="player-meta-row">
@@ -567,13 +616,15 @@
       </article>
 
       <article class="player-card" data-position="forward">
-        <div class="player-photo">
-          <span class="player-num-badge">#00</span>
-          <img src="../images/players/player-07.jpg" alt="Learners FC player" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
-          <span class="fallback-num" style="display:none;">LFC</span>
-          <div class="player-overlay"></div>
-        </div>
+        <button class="player-photo-btn" type="button" data-lightbox-src="../images/players/player-07.jpg" data-lightbox-alt="Player Name" data-lightbox-caption="Player Name — Forward" aria-label="View photo of Player Name">
+          <div class="player-photo">
+            <span class="player-num-badge">#00</span>
+            <img src="../images/players/player-07.jpg" alt="Learners FC player" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+            <span class="fallback-num" style="display:none;">LFC</span>
+            <div class="player-overlay"><span class="player-overlay-label">View Photo</span></div>
+          </div>
+        </button>
         <div class="player-info">
           <h3 class="player-name">Player Name</h3>
           <div class="player-meta-row">
@@ -585,13 +636,15 @@
       </article>
 
       <article class="player-card" data-position="goalkeeper">
-        <div class="player-photo">
-          <span class="player-num-badge">#00</span>
-          <img src="../images/players/player-08.jpg" alt="Learners FC player" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
-          <span class="fallback-num" style="display:none;">LFC</span>
-          <div class="player-overlay"></div>
-        </div>
+        <button class="player-photo-btn" type="button" data-lightbox-src="../images/players/player-08.jpg" data-lightbox-alt="Player Name" data-lightbox-caption="Player Name — Goalkeeper" aria-label="View photo of Player Name">
+          <div class="player-photo">
+            <span class="player-num-badge">#00</span>
+            <img src="../images/players/player-08.jpg" alt="Learners FC player" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-num').style.display='block';">
+            <span class="fallback-num" style="display:none;">LFC</span>
+            <div class="player-overlay"><span class="player-overlay-label">View Photo</span></div>
+          </div>
+        </button>
         <div class="player-info">
           <h3 class="player-name">Player Name</h3>
           <div class="player-meta-row">
@@ -624,37 +677,37 @@
 
     <div class="staff-grid">
       <article class="staff-card reveal">
-        <div class="staff-photo">
-          <img src="../images/staff/head-coach.jpg" alt="Head Coach" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.textContent='LFC';">
-        </div>
-        <h3 class="staff-name">Name — Placeholder</h3>
-        <p class="staff-role">Head Coach</p>
-        <p class="staff-bio">Biography to be added once confirmed by the club.</p>
-      </article>
-
-      <article class="staff-card reveal">
-        <div class="staff-photo">
-          <img src="../images/staff/assistant-coach.jpg" alt="Assistant Coach" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.textContent='LFC';">
-        </div>
-        <h3 class="staff-name">Name — Placeholder</h3>
+        <button class="staff-photo-btn" type="button" data-lightbox-src="../assets/images/assistant-coach.jpg" data-lightbox-alt="Regan Azalekor" data-lightbox-caption="Regan Azalekor — Assistant Coach" aria-label="View photo of Regan Azalekor">
+          <div class="staff-photo">
+            <img src="../assets/images/assistant-coach.jpg" alt="Regan Azalekor" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.textContent='LFC';">
+          </div>
+        </button>
+        <h3 class="staff-name">Regan Azalekor</h3>
         <p class="staff-role">Assistant Coach</p>
-        <p class="staff-bio">Biography to be added once confirmed by the club.</p>
+        <p class="staff-bio">
+          <span class="bio-short">Regan's coaching identity centers on controlling the game by controlling the ball — compact, possession-based football combined with quick transitions and a high press.</span>
+          <span class="bio-full" hidden>Regan's coaching identity centers on controlling the game by controlling the ball — compact, possession-based football combined with quick transitions and a high press. He works within a 3-5-2 system built for both defensive security and attacking flexibility. In possession, his teams build from the back and create numerical superiority in midfield; out of possession, they press high and transition instantly. My teams are compact, disciplined and relentless out of possession — winning the ball high and transitioning instantly. His approach draws on the influence of Pep Guardiola (his biggest influence, for a winning mentality and mastery of positional play), Jürgen Klopp (for high-pressing and transition play), and Antonio Conte (for proving the 3-5-2 can be both compact and devastating). At Learners FC, we don't just play football — we learn to understand it.</span>
+        </p>
+        <button class="staff-bio-toggle" type="button" aria-expanded="false">Read More</button>
       </article>
 
       <article class="staff-card reveal">
-        <div class="staff-photo">
-          <img src="../images/staff/team-manager.jpg" alt="Team Manager" loading="lazy"
-               onerror="this.style.display='none'; this.parentElement.textContent='LFC';">
-        </div>
+        <button class="staff-photo-btn" type="button" data-lightbox-src="../images/staff/staff-placeholder.jpg" data-lightbox-alt="Staff member" data-lightbox-caption="Name — Placeholder" aria-label="View photo">
+          <div class="staff-photo">
+            <img src="../images/staff/staff-placeholder.jpg" alt="Staff member" loading="lazy"
+                 onerror="this.style.display='none'; this.parentElement.textContent='LFC';">
+          </div>
+        </button>
         <h3 class="staff-name">Name — Placeholder</h3>
-        <p class="staff-role">Team Manager</p>
-        <p class="staff-bio">Biography to be added once confirmed by the club.</p>
+        <p class="staff-role">Role — TBC</p>
+        <p class="staff-bio">
+          <span class="bio-short">Biography to be added once this role is confirmed by the club.</span>
+        </p>
       </article>
     </div>
-    <!-- Additional roles (Goalkeeping Coach, Fitness/Conditioning) can be
-         added as staff-card blocks above once those positions are confirmed. -->
+    <!-- Additional roles (Goalkeeping Coach, Fitness/Conditioning, Team Manager) can
+         replace the placeholder card above once those positions are confirmed. -->
   </div>
 </section>
 
@@ -749,11 +802,11 @@
         <p class="footer-philosophy">Learn. Relearn. Unlearn.</p>
         <div class="social-row" aria-label="Social media links">
   <a href="https://www.facebook.com/share/18cJdfzD5d/" class="social-icon" aria-label="Facebook" target="_blank">f</a>
-  
+
   <a href="https://www.tiktok.com/@leanersfc?_r=1&_t=ZS-98yEqGBlTID" class="social-icon" aria-label="TikTok" target="_blank">tk</a>
-  
+
   <span class="social-icon coming-soon" aria-label="Instagram Coming Soon" role="link" aria-disabled="true">ig</span>
-  
+
   <span class="social-icon coming-soon" aria-label="YouTube Coming Soon" role="link" aria-disabled="true">yt</span>
 </div>
       </div>
@@ -794,6 +847,15 @@
     </div>
   </div>
 </footer>
+
+<!-- ============================================
+     LIGHTBOX OVERLAY (player + staff photos)
+============================================ -->
+<div class="lightbox-overlay" id="lightboxOverlay" hidden>
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close photo">&times;</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
 
 <script>
   (function(){
@@ -884,6 +946,44 @@
         applyFilter(btn.getAttribute('data-filter'));
       });
     });
+
+    /* 7. Staff bio read more / read less */
+    document.querySelectorAll('.staff-bio-toggle').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var card = btn.closest('.staff-card');
+        var shortEl = card.querySelector('.bio-short');
+        var fullEl = card.querySelector('.bio-full');
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        shortEl.hidden = !expanded;
+        fullEl.hidden = expanded;
+        btn.textContent = expanded ? 'Read More' : 'Read Less';
+        btn.setAttribute('aria-expanded', String(!expanded));
+      });
+    });
+
+    /* 8. Lightbox for player + staff photos */
+    var overlay = document.getElementById('lightboxOverlay');
+    var overlayImg = document.getElementById('lightboxImg');
+    var overlayCaption = document.getElementById('lightboxCaption');
+    var closeBtn = document.getElementById('lightboxClose');
+
+    document.querySelectorAll('[data-lightbox-src]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        overlayImg.src = btn.getAttribute('data-lightbox-src');
+        overlayImg.alt = btn.getAttribute('data-lightbox-alt') || '';
+        overlayCaption.textContent = btn.getAttribute('data-lightbox-caption') || '';
+        overlay.hidden = false;
+      });
+    });
+
+    function closeLightbox(){
+      overlay.hidden = true;
+      overlayImg.src = '';
+      overlayCaption.textContent = '';
+    }
+    closeBtn.addEventListener('click', closeLightbox);
+    overlay.addEventListener('click', function(e){ if(e.target === overlay) closeLightbox(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeLightbox(); });
 
   })();
 </script>
